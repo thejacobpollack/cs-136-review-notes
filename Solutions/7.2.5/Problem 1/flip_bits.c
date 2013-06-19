@@ -30,7 +30,7 @@ int flip_bits( char c ) {
    unsigned char mask = 0x80;
    
    // Iterates as long as the bitmask is non-zero. Each
-   // iteration it will shift the bits one spot to the left.
+   // iteration it will shift the bits one spot to the right.
    // If the character and the bit mask do not share an on
    // bit then it will give the new bit an on bit, otherwise
    // it wil give the new bit an off bit (by doing nothing).
