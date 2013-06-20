@@ -1,0 +1,55 @@
+% Code box.
+\lstnewenvironment{code}[1][]
+	{\begingroup
+		%\vfil\penalty-9999\vfilneg\lstset{language=#1}
+		\lstset{language=#1}
+	}
+	{\endgroup}
+
+% Definition box.
+\newcommand{\defnbox}[2] {
+	\setlength{\fboxsep}{8pt}
+	\marginpar {
+		\vspace{0.9em}
+		\footnotesize{\textbf{\color{brown}DEFINITION}}
+		\begin{center}
+		\footnotesize{\textbf{#1}}
+		\end{center}
+	}
+	\colorbox{lightyellow}{
+		\begin{varwidth}{\dimexpr\linewidth-2\fboxsep}
+		#2
+		\end{varwidth}
+	}
+	~\\
+}
+
+% Example box.
+\newcommand{\exbox}[2] {
+	\setlength{\fboxsep}{8pt}
+	\marginpar {
+		\vspace{0.9em}
+		\footnotesize{\textbf{\color{darkpurple}EXAMPLE #1}}
+	}
+	\colorbox{lightpurple}{
+		\begin{varwidth}{\dimexpr\linewidth-2\fboxsep}
+		#2
+		\end{varwidth}
+	}
+	~\\
+}
+
+% Exercise box.
+\newcommand{\exerbox}[1] {
+	\setlength{\fboxsep}{8pt}
+	\marginpar {
+		\vspace{0.9em}
+		\footnotesize{\textbf{\color{darkred}EXERCISE}}
+	}
+	\colorbox{lightred}{
+		\begin{varwidth}{\dimexpr\linewidth-2\fboxsep}
+		#1
+		\end{varwidth}
+	}
+	~\\
+}

@@ -1,581 +1,133 @@
 % Document Information.
 \documentclass[11pt, twoside, exarticle]{article}
 
-% Packages.
-\usepackage[left=24mm, top=24mm, right=24mm, bottom=24mm, asymmetric, reversemarginpar]{geometry}
+% Included packages.
+\usepackage[left=28mm, top=24mm, right=28mm, bottom=24mm, asymmetric, reversemarginpar]{geometry}
+\usepackage{titlesec}
 \usepackage{marginnote}
 \usepackage{listings}
 \usepackage{color}
 \usepackage{xkeyval}
 \usepackage{varwidth}
 \usepackage{microtype} % Word Breaking
-\usepackage{ifthenx}
-
-% Defining colors.
-\definecolor{brown}{RGB}{101, 91, 71}
-\definecolor{lightyellow}{RGB}{228, 224, 128}
-
-\definecolor{codebg}{RGB}{255, 255, 238}
-\definecolor{codeborder}{RGB}{243, 242, 222}
-\definecolor{darkred}{RGB}{203, 20, 20}
-\definecolor{lightred}{RGB}{229, 130, 130}
-\definecolor{darkpurple}{RGB}{76, 60, 189}
-\definecolor{lightpurple}{RGB}{184, 183, 255}
-\definecolor{purple}{RGB}{174, 19, 198}
-\definecolor{darkblue}{RGB}{0, 0, 102}
-\definecolor{lightblue}{RGB}{50, 155, 171}
-\definecolor{lightgreen}{RGB}{29, 131, 43}
-
-% Declaring style for code blocks (dstyle).
-\lstdefinestyle{dstyle} {
-	backgroundcolor=\color{codebg},
-	rulecolor=\color{codeborder},
-	stringstyle=\color{purple},
-	keywordstyle=\color{darkblue},
-	identifierstyle=\color{lightblue},
-	commentstyle=\color{lightgreen},
-	basicstyle=\footnotesize\sffamily,
-	xleftmargin=10pt,
-	xrightmargin=10pt,
-	belowcaptionskip=10pt,
-	belowskip=20pt,
-	framesep=10pt,
-	frame=single,
-	%numbers=left,
-	%numbersep=8pt,
-	showspaces=false,
-	showstringspaces=false,
-	tabsize=2
-}
-
-% Sets the style for code blocks.
-\lstset {
-	style=dstyle
-}
-
-\lstnewenvironment{code}[1][]
-	{\begingroup
-		%\vfil\penalty-9999\vfilneg\lstset{language=#1}
-		\lstset{language=#1}
-	}
-	{\endgroup}
-
-% Extra Document Information.
-\title{\textbf{Midterm Review Notes Ed 2.0}}
 
 \newcommand{\docbuild}{2.0}
-\newcommand{\defnbox}[2] {
-	\setlength{\fboxsep}{8pt}
-	\marginpar {
-		\vspace{0.9em}
-		\footnotesize{\textbf{\color{brown}DEFINITION}}
-		\begin{center}
-		\footnotesize{\textbf{#1}}
-		\end{center}
-	}
-	\colorbox{lightyellow}{
-		\begin{varwidth}{\dimexpr\linewidth-2\fboxsep}
-		#2
-		\end{varwidth}
-	}
-	~\\
-}
-\newcommand{\exbox}[2] {
-	\setlength{\fboxsep}{8pt}
-	\marginpar {
-		\vspace{0.9em}
-		\footnotesize{\textbf{\color{darkpurple}EXAMPLE #1}}
-	}
-	\colorbox{lightpurple}{
-		\begin{varwidth}{\dimexpr\linewidth-2\fboxsep}
-		#2
-		\end{varwidth}
-	}
-	~\\
-}
-\newcommand{\exerbox}[1] {
-	\setlength{\fboxsep}{8pt}
-	\marginpar {
-		\vspace{0.9em}
-		\footnotesize{\textbf{\color{darkred}EXERCISE}}
-	}
-	\colorbox{lightred}{
-		\begin{varwidth}{\dimexpr\linewidth-2\fboxsep}
-		#1
-		\end{varwidth}
-	}
-	~\\
-}
 
-\renewcommand{\contentsname}{Table of Contents}
+% Extra Document Information.
+\title{\textbf{Midterm Review Notes Ed \docbuild}}
 
-% Document formatting and headings.
-\pagestyle{myheadings}
-\setcounter{secnumdepth}{4}
-\pagenumbering{roman}
+% Defines RGB colors.
+\input{Functions/colors.tex}
 
-\setlength{\parindent}{0cm}
+% Listing package formatting.
+\input{Functions/listing_formatting.tex}
 
-% Begins the Document.
+% Box commands.
+\input{Functions/box_commands.tex}
+
+% Document formatting.
+\input{Functions/document_formatting.tex}
+
+% Section formatting
+\input{Functions/section_formatting.tex}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% (Start) Document                                        %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 \begin{document}
 
-\thispagestyle{empty}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% (Start) Title                                           %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \makeatletter
 \hfil\parbox[t]{0.7\textwidth}{\centering\LARGE\bfseries\@title}\par
 \kern0.5cm \hrule\kern0.5cm
 \makeatother
 
-\section*{Preamble}
-\addcontentsline{toc}{subsubsection}{Preamble}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% (End) Title                                             %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-In the second edition (\docbuild) of my review notes you will find a further in depth perspective (of my original perspective) on the material presented during the University of Waterloo's summer semester offering of CS 136. These notes are not aimed to replace lectures, tutorials, labs, office hours with your professor or TA, Piazza, or any other source directly provided by the course. It is solely aimed as a study aid that you can refer to for peer perspective on the course material.\\
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% (Start) Preamble                                        %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-These notes were written during the University of Waterloo's summer semester offering of CS 136 in 2013. It covers only midterm material (modules 1 - 6) and was written pre-midterm as a review for the midterm itself. The material that influenced the contents these notes are as follows:
-
-\begin{itemize}
-
-\item Lecture slides designed by the professors.
-\item "C Programming a Modern Approach -- Second Edition", textbook for the course.
-\item Class averages on assignments (publicly posted on Piazza).
-\item Other posts on the CS 136 Piazza class.
-\item Student perspectives.
-\item and other third party websites used to improve our understanding.
-
-\end{itemize}
-
-To preserve the chronological order that the material was presented during lecture, these review notes will follow a similar structure. However, some material in these review notes may be introduced earlier or later than with respect to the lectures. This will only occur if we feel as if material flows better in a separate section than it was originally introduced in.\\
-
-Practice exercises can be found scattered throughout each section of the review notes. There is a special section at the end dedicated to sample midterm problems based on emphasized course material, struggling assignment questions and other factors.
-
-\subsubsection*{Prerequisites}
-
-\textit{Student: Can you give me some pointers for the CS 136 midterm?}\\
-\textit{Professor: 0xff98120f, 0x000000ff, 0x89ff7192, ...}\\
-
-It is expected that before you begin reading these notes that you have attended every lecture, completed assignments 1 through 5 (and possibly 6) and that you have already been introduced to a majority the material presented in these notes.\\
-
-You should be comfortable using RunC with gedit as your editor for your Racket and C programs. In addition, possibly the most important prerequisite, you should have at least a 4 day window before your midterm while you are looking through these notes. It will be extremely hard to power through these carefully designed review notes and understand all the concepts the night before the midterm.
-
-\clearpage
+% Removes all document styling from this page.
 \thispagestyle{empty}
-\section*{Disclaimer}
-\addcontentsline{toc}{subsubsection}{Disclaimer}
 
-We ask that you (our peer) respect all of the guidelines we (your peers) set forth with respect to these review notes. If you are unable to respect any of the guidelines mentioned in the proceeding few paragraphs, please delete this file or close the hard copy of the review notes.\\
+% Preamble Page
+\input{Pages/preamble.tex}
 
-\begin{enumerate}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% (End) Preamble                                          %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\item We alone reserve the right to alter and distribute these review notes\footnote{The direct link for the PDF of the most updated build of these notes can be found at the following web page: \textbf{www.jamach.com/cs136/midterm\_review\_notes.pdf}}. If you see a mistake or feel as if important content is missing, contact us (information provided below) so that we can make the appropriate correction(s).
-
-\item We will be supporting the accuracy of these review notes for the remainder of the summer semester (2013). After such a time these review notes should be considered obsolete.
-
-\item These review notes are provided absolutely free of charge. If you paid for a hard copy or e-copy of these review notes then you are obligated to contact us so that we can take the appropriate action(s) towards the distributor.
-
-\end{enumerate}
-
-Keep in mind that these notes are in no way guaranteed to be accurate. There may be mistakes, outdated information or tangents that will not be directly related to some of the material presented in the course. These notes have been developed by a few of your peers (yes, students!) during our undergraduate year taking CS 136. No professor, TA or anyone involved in the administration at the University of Waterloo has endorsed these notes.
-
-\section*{Special Notices}
-\addcontentsline{toc}{subsubsection}{Special Notices}
-
-These review notes would not be possible without the offering of CS 136 at the University of Waterloo and all the hard work the professors, TAs and behind the scenes administration put into this course. This is a truly fantastic course and every student involved in creating these review notes are absolutely loving it. Special mentions to the following students:
-
-\begin{itemize}
-
-\item Jacob Pollack, author (\textbf{jpollack@uwaterloo.ca}).
-\item Jacob Willemsma, co-author.
-\item Nimesh Das, pilot student.
-\item ... and all the students on the Piazza post who assisted with editing.
-
-\end{itemize}
-
-\subsubsection*{Acknowledgements}
-
-Some further acknowledgments to the authors of the CS 136 material and other influencing figures who \textbf{indirectly} impacted these review notes.
-
-\begin{itemize}
-
-\item Professors and Teaching Assistants for the summer semester of 2013: Dave Tompkins, Olga Zorin and Patrick Nicholson.
-\item Design inspired by "Linear Algebra Course Notes" by Dan Wolczuk (with permission).
-
-\end{itemize}
-
+% Clears the rest of the preamble page.
 \clearpage
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% (Start) Disclaimer                                      %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Removes all document styling from this page.
 \thispagestyle{empty}
+
+% Disclaimer Page
+\input{Pages/disclaimer.tex}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% (End) Disclaimer                                        %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Clears the rest of the discalaimer page.
+\clearpage
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% (Start) Table of Contents                               %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Removes all document styling from this page.
+\thispagestyle{empty}
+
+\renewcommand{\contentsname}{Table of Contents}
+
+% Makes the Table of Contents
 \tableofcontents
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% (End) Table of Contents                                 %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Clears the rest of the table of contents page.
 \clearpage
 
-% Sets page numbering.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% (Start) Module Content                                  %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Declares the page numbering as arabic (1, 2, 3, 4 ...).
 \pagenumbering{arabic}
 
-% Set margin values
+% Declares the margin values for all of the module content.
 \setlength{\oddsidemargin}{1.6cm}
 \setlength{\evensidemargin}{\oddsidemargin}
 \setlength{\marginparwidth}{2.6cm}
 \setlength{\marginparsep}{0.25cm}
 
-\section{Introduction: Module 01}
-
-The official catalog entry for CS 136 at the University of Waterloo is as follows:\\
-
-\defnbox{CS 136}{This course builds on the techniques and
-patterns learned in CS 135 while making the transition to use of an
-imperative language. It introduces the design and analysis of
-algorithms, the management of information, and the programming
-mechanisms and methodologies required in implementations.
-Topics discussed include iterative and recursive sorting algorithms;
-lists, stacks, queues, trees, and their application; abstract data types
-and their implementations.}
-
-In the prerequisite course(s) -- CS 135 (and CS 115/116), the focus was programming in a functional paradigm in Racket (and in CS 116, Python). However in CS 136, as I hope you are now aware, the focus has shifted to programming in an imperative paradigm in C (C99). Let's look into what it means to program in both paradigms.\\
-
-\defnbox{Functional Paradigm}{The process of evaluating code as a sequence of Mathematical functions, avoiding mutation and the manipulation of state. It has an emphasis on function definition, function application and recursion.}
-
-\defnbox{Imperative Paradigm}{The process of evaluating statements that change a programs state. This is done through mutation and control flow.}
-
-There is a third paradigm, declarative programming, however we are not introduced this in the course and hence it will not be referenced again throughout these review notes.\\
-
-From looking at these paradigms it is fair to conclude that one is the opposite of the other. But do not take my word for it, let's see an example.\\
-
-\exbox{1}{Consider the following two functions that return the sum from $0 ... n$ of a positive integer integer $n$.}
-
-\begin{code}[c]
-int sum( int const n ) {
-	return ( 0 == n ) ? 0 : ( n + sum( n - 1 ) );
-}
-\end{code}
-
-\begin{code}[c]
-int sum( int const n ) {
-	int acc_sum = 0;
-	
-	for( int i = 0; i <= n; i++ ) {
-		acc_sum += i;
-	}
-	
-	return acc_sum;
-}
-\end{code}
-
-For the time being we will be asked to program in a functional paradigm. We will introduce the imperative paradigm in the notes for module 05.
-
-\clearpage
-\subsection{Full Racket}
-
-It is true! We are finally old enough (as Dave says) to use full Racket. However there are a few things we will need to keep in mind in order to use it properly. Recall that to enable full Racket you must have the following definition at the top of every Racket file.\\
-
-\begin{code}[Lisp]
-#lang racket
-\end{code}
-
-\subsubsection*{Functions}
-
-Keep in mind there is some funky terminology for Racket. We \textbf{apply} functions which \textbf{consume} arguments and \textbf{produce} a value. Consider the following example.\\
-
-\exbox{1}{The following function, $f$ consumes two integers, $x$ and $y$ and produces the sum of $x$ and $y$.}
-
-\begin{code}[Lisp]
-(define (f x y)
-	(+ x y))
-\end{code}
-
-\subsubsection*{Constants}
-
-Recall how to define a constant in Racket.\\
-
-\begin{code}[Lisp]
-(define age 19)
-\end{code}
-
-When you are defining a constant in Racket it is an immutable identifier. We will see later on how to mutate an immutable identifier in Racket, however not now. Consider the following example.\\
-
-\exbox{2}{The following function, $get\_pennies$ consumes one integer, $n$ and produces the value of $n$ pennies.}
-
-\begin{code}[Lisp]
-(define penny 1)
-
-(define (get_pennies n)
-	(* n pennies))
-\end{code}
-
-Constants are quite useful to improve \textbf{readability} and ease of \textbf{maintainability}. What if the value of a penny changed from 1 cent to 2 cents and we have over 100 different functions using the value of a penny. All we would need to do is change one constant as oppose to changing the value of a penny in over 100 separate places.
-
-\subsubsection*{Functions without Parameters}
-
-This is indeed possible. However, you will find this feature not very useful until we introduce \textbf{side effects}. For now, just be aware of what they are. Consider the following example.\\
-
-\exbox{3}{The following function, $get\_lucky\_number$ consumes nothing. It produces a lucky number.}
-
-\begin{code}[Lisp]
-(define (get_lucky_number)
-	9)
-\end{code}
-
-But how do we define a number as lucky? This is up to interpretation however a lucky number in my opinion is 9 (trick question).
-
-\subsubsection*{Top-Level Expressions}
-
-These are rather interesting. If you recall, Racket files will be executed line by line. What would happen if you were to place an expression above a function? Consider the following example.\\
-
-\exbox{4}{First consider what the following Racket file will do. Then open Dr Racket and discover for yourself what it really does.}
-
-\begin{code}[Lisp]
-#lang racket
-
-; A top-level expression.
-(+ 3 4) ; => 7
-
-; A function definition.
-(define (f x y)
-	(+ x y))
-
-; Some more top-level expressions.
-(f 3 4) ; => 7
-(f (f 3 4) (f 3 4)) ; => 14
-(* 2 8) ; => 10
-\end{code}
-
-You should notice that it outputs 7, 7, 14 and 10 to the console. These are are \textbf{top-level expressions} that get executed and output to the console.
-
-\subsubsection*{Logic in Racket}
-
-Recall booleans, symbols, strings, characters, logic operators (and ... or) and conditional statements from CS 135 (or CS 115). These are still very important for the Racket portion of CS 136. If you remember the syntax for a conditional statement, we are now introduced to a newer, more compact syntax. Consider the following.\\
-
-\clearpage
-\exbox{5}{The following function will consume a symbol and output $\#t$ or $\#f$ if the symbol is my favorite color.}
-
-\begin{code}[Lisp]
-(define favorite-color #\b) ; Char b for blue.
-(define favorite-color "blue") ; Blue as a string.
-(define favorite-color 'blue) ; Blue as a symbol.
-
-; Older syntax.
-(define (guess-color color)
-	(cond
-		[(symbol=? color favorite-color) #t]
-		[else #f]))
-
-; Newer syntax.
-(define (guess-color color)
-	(if (symbol=? color favorite-color) #t #f))
-
-; .. or solely for this specific function.
-(define (guess-color color)
-	(symbol=? color favorite-color))
-\end{code}
-
-Keep in mind that you would think 0 is considered as $\#f$ in Racket, however you are wrong. Anything that is not explicitly $\#f$ is considered true in Racket, including 0.\\
-
-\begin{code}[Lisp]
-(equal? #f 0) ; => False
-(equal? #f 1) ; => False
-(equal? #t 0) ; => True
-(equal? #t 1) ; => True
-\end{code}
-
-\subsubsection*{Structures}
-
-No, we are not getting rid of these bad boys anytime soon. In full Racket the syntax for structures become more compact with one little tedious, but important detail. Consider the following.\\
-
-\exbox{6}{Carefully examine the definition of how the $posn$ structure is defined in full Racket. Do you spot anything new?}
-
-\begin{code}[Lisp]
-(struct posn (x y) #:transparent)
-\end{code}
-
-If you noticed, it is no longer $define-struct$, it is now just $struct$. In addition, we must add the $\#:transparent$ keyword at the end of the structure.\\
-
-\clearpage
-\exerbox{Create a structure in Racket without the $\#:transparent$ keyword then define a random $posn$ and observe what happens when you execute the Racket file.}
-
-\subsubsection*{Lists}
-
-From CS 135 (or CS 115) we should be comfortable using $cons$, $list$, $empty$, $first$, $rest$, $list-ref$, $length$, $append$, $reverse$, $last$ and $drop\-right$. Consider the following.\\
-
-\exbox{7}{Examine the use of $cons$ and $list$. The function $is\_equal$ will compare two lists and you can assume it works fine.}
-
-\begin{code}[Lisp]
-(define lst1 (cons 1 (cons 2 (cons 3 empty))))
-(define lst2 (list 1 2 3))
-
-(define (is_equal lstx lsty)
-	(cond
-		[(and (empty? lstx) (empty? lsty)) #t]
-		[(or (empty? lstx) (empty? lsty)) #f]
-		[(equal? (first lstx) (first lsty)) (and #t (is_equal (rest lstx)
-		                                                      (rest lsty)))]
-		[else #f]))
-	
-(equal? #t (is_equal lst1 lst2)) ; => True
-lst1 ; => '(1 2 3)
-lst2 ; => '(1 2 3)
-\end{code}
-
-If you recall even further, $member$ will check whether an element is a memory of a list. In full Racket $member$ now produces the tail of the list if true, otherwise $\#f$. Keep in mind only $\#f$ is false in Racket, meaning the tail of a list is still considered true.
-
-\subsubsection*{Abstract List Functions}
-
-Recall what an \textbf{abstract list} function is? They are built-in functions to Racket that perform useful operations on lists. The important feature for abstract list functions is that we can pass parameters to them.\\
-
-We should be familiar with all the following abstract list functions: $filter$, $build-list$, $map$, $foldl$ and $foldr$. Consider the following examples.\\
-
-\exbox{8}{Examine the use of $filter$, $build-list$, $map$, $foldl$ and $foldr$ in the following top level expressions.}
-
-\begin{code}[Lisp]
-(define lst1 (build-list 5 values)) ; => (list 1 2 3 4 5)
-(define lst2 (build-list 5 values)) ; => (list 1 2 3 4 5)
-
-(filter odd? lst) ; => (list 2 4)
-(map + lst1 lst2) ; => (list 2 4 6 8 10)
-(foldl + 0 lst1) ; => 15
-(foldr + 0 lst1) ; => 15
-\end{code}
-
-\subsubsection*{Lambda}
-
-The use of $lambda$ in Racket is probably one of my favorite language features. It is so powerful, if you do not know what it is your mind will be blown! Consider the problem that, we want to add a small bit of functionality that will only be used once and is exclusive to a specific task. We could create a helper function, however it will get messy. What about an anonymous function? Consider the following example.\\
-
-\exbox{9}{Observe the use of $lambda$ as an anonymous function to add functionality that would otherwise require the use of a helper function.}
-
-\begin{code}[Lisp]
-(define lst1 (build-list 10 values)) ; => (list 1 ... 10 )
-
-(filter (lambda (x) (and (even? x) (> x 5))) lst1) ; => (list 6 8 10)
-\end{code}
-
-The power of $lambda$ in Racket is endless.\\
-
-\exerbox{Use the abstract list function $build-list$ to create a list of squares from 0 ... 10. Hint, use $lambda$.}
-
-\subsubsection*{Implicit Locals}
-
-We no longer need to explicitly state $local$ while we are writing local constants or helper functions. This feature can still however be used but it is not needed nor recommended in full Racket. The $local$ special form is now implicit.
-
-\clearpage
-\subsection{Binary Search Trees}
-
-The most useful tree we have seen in CS 135 (and CS 115) which we will continue to use is the \textbf{Binary Search Tree} (BST). Here let's make an important definition describing what a valid BST is.\\
-
-\defnbox{Binary Search Tree}{
-A node-based binary tree data structure, sometimes referred to as a sorted binary tree, which has the following properties.
-
-\begin{itemize}
-
-\item The left subtree of a node contains only keys less than the node's key.
-\item The right subtree of a node contains only keys greater than the node's key.
-\item The left and right subtree must also be valid BSTs.
-\item There cannot be any duplicates.
-
-\end{itemize}
-
-These properties are also referred to as the \textbf{ordering property}.
-}
-
-Remark that an empty BST can be represented by the keyword $empty$, however any sentinel value (such as $\#f$) is accepted. I prefer to stick with $empty$ and hence it will be used in any further examples.\\
-
-In this course, a BST is defined as follows.\\
-
-\begin{code}[Lisp]
-(struct bst-node (key val left right) #:transparent)
-\end{code}
-
-Questions where we are supposed to create functions that perform some operation on a BST will 99\% of the time have some form of recursion. A BST is a recursive data structure and hence recursion is more often than not used to access nodes. Consider the following examples to jog your memory and improve your understanding.\\
-
-\exbox{1}{Write a function $key\_exists?$ that will consume two arguments, a key and a valid BST and will produce $\#t$ if the key exists, otherwise $\#f$.}
-
-\begin{code}[Lisp]
-(struct bst-node (key val left right) #:transparent)
-
-(define (key_exists? key abst)
-	(cond
-		[(empty? abst) #f]
-		[(equal? key (bst-node-key abst)) #t]
-		[else (or (key_exists? key (bst-node-left abst))
-		          (key_exists? key (bst-node-right abst)))]))
-\end{code}
-
-\exbox{2}{Write a function $insert\_node$ that will consume three arguments, a key, a value and a valid BST and will produce the new BST with the key and value added to the BST. If the key already exists, it will overwrite the value of that node.}
-
-\begin{code}[Lisp]
-(struct bst-node (key val left right) #:transparent)
-
-(define (insert_node key val abst)
-	(cond
-		[(empty? abst) (struct key val empty empty)]
-		[(equal? key (bst-node-key abst)) (struct key val 
-		                                          (bst-node-left abst)
-		                                          (bst-node-right abst))]
-		[(> key (bst-node-key abst)) (struct (bst-node-key abst)
-		                                     (bst-node-val abst)
-		                                     (bst-node-left abst)
-		                                     (insert_node key val 
-		                                                  (bst-node-right abst)))]
-		[else (struct (bst-node-key abst)
-		              (bst-node-val abst)
-		              (insert_node key val (bst-node-left abst))
-		              (bst-node-right abst))]))
-\end{code}
-
-\exbox{3}{Write a function $sum\_vals$ that will consume one argument, a valid BST and will produce the sum of all the values in the BST. You can assume all values are integers.}
-
-\begin{code}[Lisp]
-(struct bst-node (key val left right) #:transparent)
-
-(define (sum_vals abst)
-	(cond
-		[(empty? abst) 0]
-		[else (+ (+ (bst-node-val abst) (sum_vals (bst-node-left abst))) 
-		         (bst-node-right abst))]))
-\end{code}
-
-\exerbox{Write a function $get\_values$ that consumes two arguments, a non-empty list of valid keys and a valid BST. It will produce a list of values from smallest key's value to greatest key's value.}
-
-\clearpage
-\subsection{Documentation (Design Recipe)}
-
-This is a very tedious but necessary aspect of designing successful software. You may have noticed that not all the questions on the assignments given out by the professors are hand marked and you may be thinking, why bother to include a design recipe? Regardless of hand marking or not, it is required as it does two important things:
-
-\begin{itemize}
-
-\item To help us design new functions from scratch.
-\item To aid in the communication of our function to other developers.
-
-\end{itemize}
-
-This may not seem useful now, however as we proceed into module 02 it will become more apparent with respect to modularization. Recall from CS 135 (and CS 115) that there were quite a few elements to the design recipe. Let's define what the design recipe is in CS 136.\\
-
-\defnbox{Design Recipe}{This is the process of communicating information about our function to a client, another developer or our self through smart documentation. It should communicate the following information:
-
-\begin{itemize}
-
-\item The contract of the function (ie what it consumes and produces).
-\item The purpose of the function.
-\item The pre and post conditions of the function (ie what are the input and output restraints).
-
-\end{itemize}
-}
-
-The design recipe should be commented out above the function it is describing. Consider the following example.\\
-
-\exbox{1}{Write the design recipe for the Racket equivalent of the $sum$ function on page 1 of these review notes.}
-
-\begin{code}[Lisp]
-; (sum n): Int -> Int
-; Purpose: Consumes an integer, n and produces a value greater than
-;          or equal to 0. This value will be the sum from 0 ... n.
-; PRE: n >= 0
-; POST: produces an integer >= 0
-(define (sum n)
-	...)
-\end{code}
-
-Well documented code is one of the most important features to have in your projects. Documentation must be written for all functions and helper functions (including locally defined helper functions).
-
-\clearpage
-\section{Modularization: Module 02}
-
-To be continued...
+% Module 01
+\input{Modules/module_01_show.tex}
+
+% Module 02
+\input{Modules/module_02_show.tex}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% (End) Module Content                                    %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \end{document}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% (End) Document                                          %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
