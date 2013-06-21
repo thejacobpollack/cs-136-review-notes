@@ -62,6 +62,8 @@ The implementation of both algorithms is as follows.\\
 		          (m2/node>? (bst-node-right abst) (- k (bst-node-key abst))))]))
 \end{code}
 
+\exerbox{Think of alternative algorithms and implement them. Then follow the same analysis we take with respect to the provided algorithms.}
+
 \newpagesubsection{Efficiency}
 
 The two most common measures of efficiency are \textbf{time efficiency} and \textbf{space efficiency}.\\
@@ -149,7 +151,9 @@ Consider the following orders.
 Pay attention to the fact that the dominant term is the order.
 }
 
-To tie order into efficiency, the algorithm with the lowest order is the most efficient. If we were to compare two different implementations $O(n)$ and $O(1)$, $O(1)$ would be the more efficient implementation.
+To tie order into efficiency, the algorithm with the lowest order is the most efficient. If we were to compare two different implementations $O(n)$ and $O(1)$, $O(1)$ would be the more efficient implementation.\\
+
+\exerbox{Compare the graphs for all of the orders we are responsible for knowing.}
 
 \subsubsection*{Big O Arithmetic}
 
@@ -161,7 +165,6 @@ What is the sum of $O(n)$ and $O(n^{3})$?\\
 \textbf{Solution}: Notice that the sum is the $max(O(n), O(n^{3}))$ which equals $O(n^{3})$.
 }
 
-\clearpage
 When multiplying two orders, the result is the distribution of both orders. Consider the following.\\
 
 \exbox{3}{
