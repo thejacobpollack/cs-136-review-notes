@@ -27,7 +27,12 @@ From looking at these paradigms it is fair to conclude that one is the opposite 
 int sum_recursive( int const n ) {
 	return ( 0 == n ) ? 0 : ( n + sum( n - 1 ) );
 }
+\end{code}
 
+Remark that this is the functional approach to handling this problem. Now consider the following.\\
+
+\clearpage
+\begin{code}[c]
 int sum_iterative( int const n ) {
 	int acc_sum = 0;
 	
@@ -38,6 +43,8 @@ int sum_iterative( int const n ) {
 	return acc_sum;
 }
 \end{code}
+
+Remark that this is the imperative approach to handling this problem. It is important we understand both paradigms as it is likely that we will be asked to program in a specific paradigm. These review notes will touch base on this in module 05, for now consider only the functional approach to problems.
 
 %For the time being we will be asked to program in a functional paradigm. We will introduce the imperative paradigm in the notes for module 05.
 
@@ -165,7 +172,6 @@ No, we are not getting rid of these bad boys anytime soon. In full Racket the sy
 
 If you noticed, it is no longer $define-struct$, it is now just $struct$. In addition, we must add the $\#:transparent$ keyword at the end of the structure.\\
 
-\clearpage
 \exerbox{Create a structure in Racket without the $\#:transparent$ keyword then define a random $posn$ and observe what happens when you execute the Racket file.}
 
 \subsubsection*{Lists}

@@ -1,0 +1,171 @@
+\newpagesection{Efficiency: Module 06}
+
+This section goes briefly into efficiency. Unfortunately in CS 136 we are only introduced to some of the basics and questions such as "why" may be left unanswered.\\
+
+Consider efficiency. What is the first word that comes to mind?\\
+
+\defnbox{Algorithm}{Is a step-by-step description on how to solve a problem.}
+
+Algorithms are not restricted to computing. You have devised hundreds of subconcious algorithms that you perform daily. Consider the following.\\
+
+\exbox{1}{
+What is my algorithm for eating cake?\\\\
+\textbf{Solution:} My algorithm can be written in the following steps.
+
+\begin{enumerate}
+
+\item Grab a slice of cake.
+\item Grab a fork and knife.
+\item Eat it as fast as possible.
+\item As I approach licking my plate, get in line for seconds.
+
+\end{enumerate}
+}
+
+\exerbox{What is the algorithm you use for brushing your teeth?}
+
+Consider the following problem.\\
+
+\exbox{2}{
+Write a Racket function $nodes>?$ that will count all of the non-empty nodes in a valid BST and determine whether there are more than $k$ nodes.\\\\
+\textbf{Solution:} Consider the following algorithms that solve this problem.
+
+\begin{enumerate}
+
+\item Calculate the total number of nodes and compare that number to $k$.
+\item Recurse through the BST. At each node recurse to $k - 1$ until it reaches empty or $k$ becomes negative.
+
+\end{enumerate}
+
+Both algorithms solve the same problem however how do we determine which one is better suited to the task? Define better? How do we \textbf{compare} algorithms?
+}
+
+\clearpage
+The implementation of both algorithms is as follows.\\
+
+\begin{code}[Lisp]
+; Algorithm 1
+(define (m1/nodes>? abst k)
+	(define (height-bst abst)
+		(cond
+			[(empty? abst) 0]
+			[else (+ 1 (+ (height-bst (bst-node-left abst))
+			              (height-bst (bst-node-right abst))))]))
+	(> (height-bst abst) k))
+
+; Algorithm 2
+(define (m2/node>? abst k)
+	(cond
+		[(empty? abst) #f]
+		[(< k (bst-node-key abst)) #t]
+		[else (or (m2/node>? (bst-node-left abst) (- k (bst-node-key abst)))
+		          (m2/node>? (bst-node-right abst) (- k (bst-node-key abst))))]))
+\end{code}
+
+\newpagesubsection{Efficiency}
+
+The two most common measures of efficiency are \textbf{time efficiency} and \textbf{space efficiency}.\\
+
+\defnbox{Time}{The worst case scenario for how much time it takes for an algorithm to solve a given problem.}
+
+\defnbox{Space}{The worse case scenario for how much space is required for an algorithm to solve a given problem.}
+
+The efficiency of an algorithm may depend on its implementation. All algorithms are measured on their worst case, this will be properly addressed shortly. Unless otherwise specified, the professors will always be referring to time efficiency.\\
+
+It is important to quantify efficiency. It may seem trivial, use seconds, however you are wrong. Seconds are not useful to a programmer because there are so many factors that could impact seconds such as, was this 1980 or 2040? Was it on a quantum computer or an iMac? What was the operating system and chip manufacturer? ... with respect to Racket we will quantify efficiency as the amount of substitution steps it takes to solve a given problem.\\
+
+Revisiting our second algorithm in example 2.\\
+
+\begin{code}[Lisp]
+(define bst-1 (bst-node 5 "" (bst-node 3 "" empty empty)
+                             (bst-node 7 "" empty empty)))
+
+(m2/node>? bst-1 10) ; => 47 steps
+\end{code}
+
+In C one measure may be how many machine instructions are executed. The problem is that the machine instruction count vary from machine to machine and would be an unreliable source of information. To quantify efficiency in C we will count the number of operations executed.\\
+
+\begin{code}[c]
+sum = 0;               // 1
+i = 0;                 // 1
+
+while ( i < 5 ) {      // 6
+  sum = sum + i;       // 2 * 5 = 10
+  i = i + 1;           // 2 * 5 = 10
+}
+\end{code}
+
+Note that the expression in the loop is executed 6 times. The $6^{th}$ execution of the expression is to verify that i is now equal to 5.
+
+\newpagesubsection{Input Size}
+
+Recall our second algorithm in example 2. Did you notice that the number of steps depended on the input size? If there are $n$ nodes in the BST, it will require $14n + 2$ steps to solve the problem. From now on we are always interested in measuring the running time based on the size of the input.\\
+
+\defnbox{Running Time}{The number of steps or operations with respect to the input, $n$, that an algorithm requires to solve a problem.}
+
+We will denote the running time of a function, $T$ as $T(n)$ where $n$ is the input size. Keep in mind there may also be another \textbf{attribute} of the input that is important in addition to size.\\
+
+\subsubsection*{Analysis}
+
+If you recall we mentioned that time and space effieciency are measured with respect to their worst case. Consider the following input to both algorithms.\\
+
+\begin{code}[Lisp]
+(define bst-1 (bst-node 10 "" (bst-node 8 "" empty empty) empty))
+
+(m1/node>? bst-1 6) ; T(9n + 4) => 22 steps
+(m2/node>? bst-1 6) ; T(15n + 5) => 5 steps
+\end{code}
+
+The \textbf{best case} is when only the first node of the BST is visited and the \textbf{worst case} is when all of the nodes are smaller than $k$ and hence all the nodes are visited. How should we decide which one is more efficient?\\
+
+\defnbox{Worst Case Analysis}{Typically, we want to be conservative (pessimistic) and use the worst case. This is the process of determing the efficiency of an algorithm by comparing worst case scenarios.}
+
+Comparing the worst case, we see that $T(9n + 4)$ is more efficient than $T(15n + 5)$. It may also be important to know the \textbf{average running time} however we will not be touching this is not touched upon in CS 136 as it requires further analysis of the algorithm with lot's of data.\\
+
+\newpagesubsection{Ordered Runtime: Big O}
+
+In practice we are not concerned about the difference between the run times of $T(9n + 4)$ and $T(15n + 5)$. We are interested in the \textbf{order} of a running time.\\
+
+\defnbox{Dominant Term}{The term that grows the larget as $n$ approaches infinity.}
+
+\defnbox{Order}{The dominant term in the running time without any constant coefficients. It is also known as the growth rate.}
+
+The dominant term in both $T(9n + 4)$ and $T(15n + 5)$ is $n$ and hence it is of order $n$, denoted as $O(n)$ in \textbf{Big O notation}. The orders that we will need to know:\\
+
+$O(1), O(\log{n}), O(n), O(n\log{n}), O(n^{2}), O(n^{3})$ and $O(2^{n})$.\\
+
+\exbox{1}{
+Consider the following orders.
+
+\begin{itemize}
+
+\item $1994$ is $O(1)$.
+\item $1994 + n$ is $O(n)$.
+\item $10 + n^{2} + n\log{n} + 1994$ is $O(n^{2})$.
+\item $9 + 2^{n} + n^{3}$ is $O(2^n)$.
+
+\end{itemize}
+
+Pay attention to the fact that the dominant term is the order.
+}
+
+To tie order into efficiency, the algorithm with the lowest order is the most efficient. If we were to compare two different implementations $O(n)$ and $O(1)$, $O(1)$ would be the more efficient implementation.\\
+
+\subsubsection*{Big O Arithmetic}
+
+When adding two orders, the larger of the two orders will be the result. Consider the following.\\
+
+\exbox{2}{
+What is the sum of $O(n)$ and $O(n^{3})$?\\
+
+\textbf{Solution}: Notice that the sum is the $max(O(n), O(n^{3}))$ which equals $O(n^{3})$.
+}
+
+\clearpage
+When multiplying two orders, the result is the distribution of both orders. Consider the following.\\
+
+\exbox{3}{
+What is the product of $O(n)$ and $O(n^{2})$?\\
+
+\textbf{Solution}: $O(n) \times O(n^{2})$ equals $O(n^{3})$.
+}
