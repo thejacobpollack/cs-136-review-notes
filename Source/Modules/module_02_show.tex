@@ -1,3 +1,119 @@
 \newpagesection{Modularization: Module 02}
 
-To be continued...
+One of the struggles in modern day computing is how do we collectively work a project. Not only that but for a large program with a large collection of functions, how do we break it down into smaller parts. This is where the push for modularization comes in.\\
+
+\defnbox{Modularization} {
+Is the process of separating functionality from a program into smaller, independent and interchangeable modules such that each module has a well defined purpose. Each module should have low coupling and high cohesion.
+}
+
+Without modularization it would be extremely difficult to work as a collective towards a common goal on a project. There are three key pushes for modularizing a project, \textbf{re-usability}, \textbf{maintainability} and \textbf{abstraction}.\\
+
+\defnbox{Re-usability}{The process of writing modules that can be taken from one project and applying them to future projects. For example, creating a module that handles MySQL database interaction can be applied to multiple projects that require the ability to access a MySQL database.}
+
+\defnbox{Maintainability}{The process of separating the project into multiple modules with a specific purpose, enabling multiple programmers to work on different aspects of project in parallel. In particular, if one module needs an update then a programming can simply extract that module, update it, then plug it back into the project without impeeding on other development on the project.}
+
+\defnbox{Abstraction}{The process of using a module designed by another company or programmer without actually knowing how it works.}
+
+Some of these terms are better understood with an example, consider the following.\\
+
+\exbox{1}{Going into the garage to repair your car radio. Instead of heading to your local Ford dealer and buy a new car, you simply extract the radio from the car and replace it with a new radio. This is an example of maintainability.}
+
+\exbox{2}{Putting triple A batteries into your flashlight before you head out camping. This is an example of abstraction.}
+
+\exbox{3}{Taking notes in your highschool calculus course and then realizing that Math 137 will spend a lot of time reviewing what you learned in highschool. So instead of taking extensive new notes, you use your old notes from highschool! This is an example of re-usability, something I did not do :(}
+
+\newpagesubsection{The Interface}
+
+One of the most important aspect of modularization is developing the interface for a module.\\
+
+\defnbox{Interface} {
+Consists of a collection of functions (function definitions) that are accessible outside of the module (public), as well as the appropriate documentation for those given functions. In short, everything a client would need in order to use our module.
+}
+
+But how do we know what a successful modular design should ahieve. What standards we should meet in our design. If you recall from the definition of modularization the terms low coupling and high cohesion were used. In successful modular design we aim to achieve both low coupling and high cohesion.\\
+
+\defnbox{Low Coupling}{There are as few modular inter-dependencies as possible.}
+
+\exbox{1}{If you have a module referencing many functions from another module, you will need to copy both modules over if you plan to re-use any of the functionality. This is an example of high coupling since you cannot extract modules without extracting other modules it depends on.}
+
+\defnbox{High Cohesion}{All the functions within a given module are working collectively towards a common goal or purpose.}
+
+\exbox{2}{If there was a module designed to make craft dinner and there was a function that ordered a coke zero from the vending machine, it would not contribute towards the common goal of the module and hence would lead to low cohesion.}
+
+\subsubsection*{Information Hiding and Documentation}
+
+It can be important to hide information about your module from the client. Consider you were contracted by TD Canada Trust (a Canadian bank) to implement a module that would handle deposits and withdrawls from an ATM. You will want to hide some of the implementation of your module to avoid letting the client access functions that could alter the intention of your program. This is commonly known as \textbf{security}.\\
+
+In Racket, when we implement a function it is automatically hidden from the client. To allow the client to have access to a given function in our module, we must $provide$ the function. Consider the following.\\
+
+\clearpage
+\exbox{3}{Implement a module that will let a client guess your favorite color.}
+
+\begin{code}[Lisp]
+#lang racket ; fav-color.rkt
+
+; Providing the appropriate functions to the client.
+(provide fav-color?)
+
+; (fav-color? color): Symbol -> Boolean
+; Purpose: Consumes a symbol, color and produces #t if the color
+;          guessed is my favorite color, otherwise #f.
+; PRE: true
+; POST: returns a boolean
+
+; ==============================================================
+
+; Declaring my favorite color (private).
+(define favorite-color 'blue)
+
+; (fav-color?/helper): Symbol -> Boolean (private)
+; Purpose: Consumes a symbol, color and produces #t if the color
+;          guessed is my favorite color, otherwise #f.
+; PRE: true
+; POST: returns a boolean
+(define (fav-color?/helper color)
+	(symbol=? favorite-color color))
+
+; See interface above (public).
+(define (fav-color? color)
+	(fav-color?/helper color))
+\end{code}
+
+Observe that the documentation for the functions that we want the client to use are placed at the top of the file followed by some delimiter. When documenting interfaces in Racket all of the design recipes for functions that we want to $provide$ to the client should be at the top. Documentation for other functions, such as helper functions, should be placed respectively with the function definition. You can document multiple functions in the interface by separating their design recipe with a new line.\\
+
+\newpagesubsection{Using Racket Modules}
+
+To use a Racket module you must use the $require$ special form. When it reaches a line with $require$, it will stop executing your code and begin executing the code for the module you are including. Once this is done it will return to your code and continue executing where it left off. Consider the following client module for our favorite color module.\\
+
+\begin{code}[Lisp]
+#lang Racket ; client.rkt
+
+; Requiring the favorite color module.
+(require "fav-color.rkt")
+
+; Guessing my favorite color.
+(fav-color? 'green) ; => #f
+(fav-color? 'red) ; => #f
+(fav-color? 'blue) ; => #t
+(fav-color? 'orange) ; => #false
+
+; ERRORs
+(fav-color?/helper 'blue) ; => Error!
+\end{code}
+
+\subsubsection*{Testing}
+
+In full Racket there is no such function called $check-expect$. The way we will create a testing module is by checking if the function with desired inputs is equal to a desired output, similar to $check-expect$.\\
+
+\exbox{1}{Design a testing module for my favorite color module.}
+
+\begin{code}[Lisp]
+#lang Racket ; test-client.rkt
+
+; Requiring the favorite color module.
+(require "fav-color.rkt")
+
+; Performs some testing.
+(equal? (fav-color? 'red) #f) ; => Test passes.
+(equal? (fav-color? 'blue) #t) ; => Test passes.
+\end{code}

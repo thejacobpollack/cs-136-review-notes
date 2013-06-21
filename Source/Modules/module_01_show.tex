@@ -24,13 +24,11 @@ From looking at these paradigms it is fair to conclude that one is the opposite 
 \exbox{1}{Consider the following two functions that return the sum from $0 ... n$ of a positive integer integer $n$.}
 
 \begin{code}[c]
-int sum( int const n ) {
+int sum_recursive( int const n ) {
 	return ( 0 == n ) ? 0 : ( n + sum( n - 1 ) );
 }
-\end{code}
 
-\begin{code}[c]
-int sum( int const n ) {
+int sum_iterative( int const n ) {
 	int acc_sum = 0;
 	
 	for( int i = 0; i <= n; i++ ) {
@@ -172,7 +170,7 @@ If you noticed, it is no longer $define-struct$, it is now just $struct$. In add
 
 \subsubsection*{Lists}
 
-From CS 135 (or CS 115) we should be comfortable using $cons$, $list$, $empty$, $first$, $rest$, $list-ref$, $length$, $append$, $reverse$, $last$ and $drop\-right$. Consider the following.\\
+From CS 135 (or CS 115) we should be comfortable using $cons$, $list$, $empty$, $first$, $rest$, $list-ref$, $length$, $append$, $reverse$, $last$ and $drop-right$. Consider the following.\\
 
 \exbox{7}{Examine the use of $cons$ and $list$. The function $is\_equal$ will compare two lists and you can assume it works fine.}
 
