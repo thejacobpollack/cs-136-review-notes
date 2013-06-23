@@ -73,5 +73,204 @@ int const MaxPaycheckReceived = 245;
 int const Max_Paycheck_Received = 245;
 \end{code}
 
+\newpagesubsection{Function Definitions}
+  
+\ No newline at end of file
+Since when we type in C, we use static typing, there are a few more things to keep in mind when declaring a new function.  In C you must have a specified return data type and every parameter must have a specified data type.  All these specifications are written in the source code.  So the following in Racket: \\
+
+\begin{code}[Lisp]
+; (sum n): Int -> Int
+;	Purpose: Consumes an integer, n and produces a value greater
+;	         than or equal to 0 that is the sum from 0 ... n.
+; PRE: n >= 0
+; POST: produces an integer >=0
+(define (sum n)
+	(if (equal? n 0) n (+ n (sum (sub1 n)))))
+\end{code}
+
+... becomes the following in C:\\
+
+\begin{code}[C]
+/*
+ * sum( n ): Is passed an argument, n and returns a value greater
+ *           than or equal to 0 that is the sum from 0 ... n.
+ * PRE: n >= 0
+ * POST: returns an integer >= 0
+ */
+int sum(int n) 
+{
+	return ( 0 == n ) ? 0 : (n + sum(n - 1));
+}
+\end{code}
+
+Note the requirement to write $int$ before the function name to specify the output and $int$ before the argument n to specify the parameter.  $Int$ in this case stands for \textbf{integer}, which is the only type we'll be using at this point of the course.\\
+
+\newpagesubsection{Operators}
+When we were dealing with Racket +, -, /, * were all types of functions.  However in C we call these operators.
+
+\subsubsection*{Basic Operators}
+
+There are a ton of operators in C, all with different varying levels of importance.  However, the basic arithmetic operators all follow BEDMAS.  If you have any doubt as to the order of operations of your program, do not hesitate to use parentheses to control the flow of your statement.  One last different is that C uses $infix$ notation rather than the $prefix$ notation used in Racket.  $Infix$ notation is the one you've been using your whole life, so it makes things a little more clear.  Here are a couple examples of the use of basic operators in C:\\
+
+\begin{code}[C]
+int const a = 1 + 1; // => 2
+int const b = 4 - 2; // => 2
+int const c = ( ( 8 / 2) - 2 ); // => 2
+int const d = 10 % 8; // => 2
+\end{code}
+
+\exerbox{
+Create a function in C that takes in an integer and returns the integer cubed.
+}
+
+\subsection*{Logic Operators}
+
+Just like in Racket, in C we have various booleans and logic operators.  In C, booleans are 0 and 1, where 0 is false and 1 is true.  (Technically all numbers which are not 0 are true).  To check equivalence you must use a double equals sign in C.
+
+\begin{code}[C]
+// The value of ...
+( 9 == 8 ) // => false, 0
+( 9 == 9 ) // => true, 1
+( 2 = 9 ) // => error
+\end{code}
+
+The use of not, and and or in Racket is translated to !, \&\& and $\parallel$ respectively in C. Note the double \& and $\mid$ for and and or.\\
+
+\begin{code}[C]
+// The value of ...
+!( 9 == 8 ) // => true
+( 1 && 1 ) // => true
+( 0 || 0 ) // => false
+( 0 || 1 ) // => true
+\end{code}
+
+It is very important to keep in mind that C will short-circuit, similar to Racket, and stop evaluating an expression when a value is known. This can become very vital in complex code, as it can prevent long runtimes.\\
+
+The ternary operation in C $?$ works a lot like an if statement.  The ternary operation follows a predicate and then returns either the first option if it is true, or moves on the the second option if false.  You can also link ternary operations together to work in a way similar to the $cond$ statement in Racket.\\
+
+\begin{code}[C]
+int ternary_operation(int n)
+{
+	(n == 8) ? 5 : // if n is 8, it will return 5.
+	(n == 9) ? 4 : // if n is 9, it will return 4.
+	(n == 10) ? 3 : 1; // if n is 10, it will return 3. 
+	//Else return 1 for all other n.
+}
+\end{code}
+
+Other operators in C include $>=$, $<=$, $>$ and $<$.  Once again if you are not sure in the order of precedence these operators take in comparison to one another, use brackets for safety.\\
+
+\newpagesubsection{Scope}
+In C, as with all programming you will ever do. it is very very important to be aware of scope.  Scope in C is consistent with Racket with a few new complexities.  As of now, we are introduced to three types of scope: \textbf{global}, \textbf{local} and \textbf{block}.\\
+
+\defnbox{Global Scope} {
+Global scope is a variable or function that is available to all outsides file sources, and both inside and outside of the file functions.
+	}
+
+\defnbox{Module Scope}{
+Module scope is a variable or function that is only visible within that module (likely just a single file).  This is used to secure content that you do not necessarily want uses having access to while using your module.  A common way in C to do with is by putting the prefix $static$.
+	}
+	
+\defnbox{Block Scope}{
+Block scope is a variable or function that is available only in a select code block (between braces {... }).  These are for variables and functions that are used during the function call and serve no purpose outside that function. 
+	}
+
+Here's a visual representation of all the different types of scope:\\
+
+\begin{code}[C]
+int const g = 9; // Global scope.
+static int const f = 9; // Module scope.
+
+// Global scope.
+int some_func(int const p) 
+{
+	int const l = 9; // Local scope.
+	
+	{
+		int const l = 10; // Block scope.
+		
+		return l + f;
+	}
+}
+\end{code}
+
+The difference between Racket and C is that by default all functions and constants have global scope (public). For constants we require an extra keyword to use those constants outside of a given module. That word is $extern$.  For example, say we had the following module.\\
+
+\begin{code}[C]
+// Module A (.h)
+
+// Function declaration (global scope).
+int sum(int n);
+\end{code}
+
+\begin{code}[C]
+// Module A (.c)
+
+// Global constant (global scope).
+int const a = 9;
+
+// Function definition.  Also Global
+int sum(int n) 
+{
+	return (0 == n) ? n : (n + sum(n - 1));
+}
+\end{code}
+
+To use \emph{a} we would need to properly call it.\\
+
+\begin{code}[C]
+// Module B
+
+// Preprocessor directive to include module a.
+#include "module_a.h"
+
+// Global constant (global scope).
+extern int const a;
+
+// Main function.
+int main(void)
+{
+	int sum_of_a = sum(a);	
+	
+	return 0;
+}
+\end{code}
+
+Last thing to know in C is that, you cannot run a top level program with top level operations.  If you recall in Racket we had top-level expressions, in C there is no such thing!\\
+
+\begin{code}[C]
+int const a = 5; // OK
+int const b = 4; // OK
+
+(a + b); // Error, C cannot evaluate this.
+\end{code}
+
+\newpagesubsection{Recursion}
+
+By now one has likely become a recursion pro and will be happy to know that recursion works exactly as one would expect in C.  We will illustrate this using the implementations from sum from 0 to n using recursion both in Racket and C.\\
+
+First in Racket...\\
+\begin{code}[Lisp]
+(define (sum n)
+	(if (equal? n 0) n (+ n (sum (sub1 n)))))
+\end{code}
+
+... and in C\\
+\begin{code}[C]
+int sum(int const n)
+{
+	return ( 0 == n ) ? n : (n + sum(n - 1));
+}
+\end{code}
+
+As one can see, it's pretty straight forward.\\
+
+\newpagesubsection{Function Definitions and Declarations}
+
+
+
+ 
+
+
 
  
