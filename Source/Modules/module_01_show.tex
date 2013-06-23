@@ -120,7 +120,7 @@ These are rather interesting. If you recall, Racket files will be executed line 
 ; Some more top-level expressions.
 (f 3 4) ; => 7
 (f (f 3 4) (f 3 4)) ; => 14
-(* 2 8) ; => 10
+(+ 2 8) ; => 10
 \end{code}
 
 You should notice that it outputs 7, 7, 14 and 10 to the console. These are are \textbf{top-level expressions} that get executed and output to the console.
@@ -188,7 +188,7 @@ From CS 135 (or CS 115) we should be comfortable using $cons$, $list$, $empty$, 
 	(cond
 		[(and (empty? lstx) (empty? lsty)) #t]
 		[(or (empty? lstx) (empty? lsty)) #f]
-		[(equal? (first lstx) (first lsty)) (and #t (is_equal (rest lstx)
+		[(equal? (first lstx) (first lsty)) (and (is_equal (rest lstx)
 		                                                      (rest lsty)))]
 		[else #f]))
 	
@@ -203,16 +203,17 @@ If you recall even further, $member$ will check whether an element is a memory o
 
 Recall what an \textbf{abstract list} function is? They are built-in functions to Racket that perform useful operations on lists. The important feature for abstract list functions is that we can pass parameters to them.\\
 
-We should be familiar with all the following abstract list functions: $filter$, $build-list$, $map$, $foldl$ and $foldr$. Consider the following examples.\\
+We should be familiar with all the following abstract list functions: $filter$, $build-list$, $map$, $foldl$ and $foldr$. Remember that for the $build-list$ function, we start building the list at 0.  Consider the following examples.\\
 
 \exbox{8}{Examine the use of $filter$, $build-list$, $map$, $foldl$ and $foldr$ in the following top level expressions.}
 
 \begin{code}[Lisp]
-(define lst1 (build-list 5 values)) ; => (list 1 2 3 4 5)
-(define lst2 (build-list 5 values)) ; => (list 1 2 3 4 5)
+(define lst1 (build-list 5 values)) ; => (list 0 1 2 3 4)
+(define lst2 (list -2 -1 0 1 2))
 
-(filter odd? lst) ; => (list 2 4)
-(map + lst1 lst2) ; => (list 2 4 6 8 10)
+(filter even? lst) ; => (list 0 2 4) remember 0 is even.
+(map abs lst2) ; => (list 2 1 0 1 2)
+(map + lst1 lst2) ; => (list -2 0 2 4 6)
 (foldl + 0 lst1) ; => 15
 (foldr + 0 lst1) ; => 15
 \end{code}
@@ -224,7 +225,7 @@ The use of $lambda$ in Racket is probably one of my favorite language features. 
 \exbox{9}{Observe the use of $lambda$ as an anonymous function to add functionality that would otherwise require the use of a helper function.}
 
 \begin{code}[Lisp]
-(define lst1 (build-list 10 values)) ; => (list 1 ... 10 )
+(define lst1 (build-list 11 values)) ; => (list 0 ... 10 )
 
 (filter (lambda (x) (and (even? x) (> x 5))) lst1) ; => (list 6 8 10)
 \end{code}
@@ -302,16 +303,17 @@ Questions where we are supposed to create functions that perform some operation 
 		              (bst-node-right abst))]))
 \end{code}
 
-\exbox{3}{Write a function $sum\_vals$ that will consume one argument, a valid BST and will produce the sum of all the values in the BST. You can assume all values are integers.}
+\exbox{3}{Write a function $sum\_vals$ that will consume one argument, a valid BST and will produce the sum of all the keys in the BST. You can assume all keys are integers (this is a typical property of a BST).}
 
 \begin{code}[Lisp]
 (struct bst-node (key val left right) #:transparent)
 
-(define (sum_vals abst)
+(define (sum_keys abst)
 	(cond
 		[(empty? abst) 0]
-		[else (+ (+ (bst-node-val abst) (sum_vals (bst-node-left abst))) 
-		         (bst-node-right abst))]))
+		[else (+ (bst-node-key abst) 
+		      	 (sum_keys (bst-node-left abst)) 
+		         (sum_keys (bst-node-right abst)))]))
 \end{code}
 
 \exerbox{Write a function $get\_values$ that consumes two arguments, a non-empty list of valid keys and a valid BST. It will produce a list of values from smallest key's value to greatest key's value.}
