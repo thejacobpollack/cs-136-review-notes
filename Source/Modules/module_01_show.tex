@@ -189,7 +189,7 @@ From CS 135 (or CS 115) we should be comfortable using $cons$, $list$, $empty$, 
 		[(and (empty? lstx) (empty? lsty)) #t]
 		[(or (empty? lstx) (empty? lsty)) #f]
 		[(equal? (first lstx) (first lsty)) (and (is_equal (rest lstx)
-		                                                      (rest lsty)))]
+		                                                   (rest lsty)))]
 		[else #f]))
 	
 (equal? #t (is_equal lst1 lst2)) ; => True
