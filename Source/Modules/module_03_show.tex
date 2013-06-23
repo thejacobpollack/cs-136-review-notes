@@ -1,3 +1,77 @@
 \newpagesection{Functional C: Module 03}
 
-To be continued...
+To ease us into C, we will first start by using it in a Racket-like $functional$ style.\\
+
+In this section, we go through most of the transitions from Racket to C99.  Please note that we are in fact using C99, there are quite a few different versions of C!  From now on we will not state that we are using C99 as it will remain the same the whole way though.\\
+
+Another interesting aspect to note is that C, unlike Racket who uses dynamic typing uses $static$ $typing$.  Keep in mind the word static comes up for a lot of different reasons.\\
+
+\defnbox{Static Typing} {
+Static typing is the process of verifying the type of an input in the source code.  C uses this type of typing, visible when declaring anything at all.
+	}
+
+\defnbox{Dynamic Typing}{
+Dynamic typing is the process of verifying the type of an input at runtime (when it compiles).  Racket uses this which is why there is no need to signal to DrRacket what types you are using.
+	}
+
+\exbox{1}{
+Here's how you would regularly define things in a Dynamic Typing language, in this case Racket.
+	}
+
+\begin{code}[Lisp]
+#lang racket
+
+(define x 9)
+(define x "Hello")
+(define x (list 1 2 3))
+
+\end{code}
+
+\exbox{2}{
+Here's how you would regularly define things in a Static Typing language, in this case C.
+	}
+
+\begin{code}[C]
+#lang racket
+
+const int x = 9;
+const char x[6] = "Hello"; // this is a string, which we will learn later.
+const int x[3] = {1 2 3}; // this is an array, which is a little like a list.
+
+\end{code}
+
+\newpagesubsection{Typing}
+
+So we've shown you a few types in C that you don't need to know about yet, so why not focus on the ones you need to know, that's what this section is about.\\
+
+In Racket we had readily available predicate functions such as $integer?$ or $cons$ that would easily determine the data type of a constant variable (constant and variable should never be in the same sentence).\\
+
+In C, we don't have or need to have predicates such as those since types are all written in the actual source code, so we have no need to check.\\
+
+You may have already seen in the last block of code how to declare constants and comment in C, however we'll just quickly go over it again.\\
+
+In C, any text on a line after // is a comment.  Furthermore, any text between /* and */ is also a comment.  Use these for writing big block comments, like for your documentation.\\
+
+In C, you \textbf{call} a function, they are \textbf{passed arguments} and \textbf{return} a value.  Furthermore, in C constants are \textbf{declared} whereas in Racket they are \textbf{defined}.  These differences are very important for documentation.\\
+
+\begin{code}[C]
+// Declaring a constant in C:
+int const x = 9;
+// Alternatively:
+const int x = 9;
+\end{code}
+
+C99 says that $const$ will be applied to the identifier at it's \textbf{left}.  If there is nothing to its left, then it will apply to the identifier at it's \textbf{right}.  Though both methods work and it does not matter very much at this point in C, the first method is preferred.\\
+
+There are a number of different styles to use while naming variables and functions.  The two we are suggested to use are either camelcase or the underscore style.  Note that you must start an identifier with a letter (a number will not work).  As long as you are consistent with your style and it is readable, you should be in the clear.\\
+
+\begin{code}[C]
+// Variable declared in CamelCase:
+int const MaxPaycheckReceived = 245;
+
+// Variable declared in Underscore:
+int const Max_Paycheck_Received = 245;
+\end{code}
+
+
+ 
