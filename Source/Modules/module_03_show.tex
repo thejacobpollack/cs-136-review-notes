@@ -110,7 +110,9 @@ When we were dealing with Racket +, -, /, * were all types of functions.  Howeve
 
 \subsubsection*{Basic Operators}
 
-There are a ton of operators in C, all with different varying levels of importance.  However, the basic arithmetic operators all follow BEDMAS.  If you have any doubt as to the order of operations of your program, do not hesitate to use parentheses to control the flow of your statement.  One last different is that C uses $infix$ notation rather than the $prefix$ notation used in Racket.  $Infix$ notation is the one you've been using your whole life, so it makes things a little more clear.  Here are a couple examples of the use of basic operators in C:\\
+There are a ton of operators in C, all with different varying levels of importance.  However, the basic arithmetic operators all follow BEDMAS.  If you have any doubt as to the order of operations of your program, do not hesitate to use parentheses to control the flow of your statement.  One last different is that C uses $infix$ notation rather than the $prefix$ notation used in Racket.  $Infix$ notation is the one you've been using your whole life, so it makes things a little more clear.\\
+
+\exbox{1}{Here are a couple examples of the use of basic operators in C.}
 
 \begin{code}[C]
 int const a = 1 + 1; // => 2
@@ -123,9 +125,9 @@ int const d = 10 % 8; // => 2
 Create a function in C that takes in an integer and returns the integer cubed.
 }
 
-\subsection*{Logic Operators}
+\subsubsection*{Logic Operators}
 
-Just like in Racket, in C we have various booleans and logic operators.  In C, booleans are 0 and 1, where 0 is false and 1 is true.  (Technically all numbers which are not 0 are true).  To check equivalence you must use a double equals sign in C.
+Just like in Racket, in C we have various booleans and logic operators.  In C, booleans are 0 and 1, where 0 is false and 1 is true.  To check equivalence you must use a double equals sign in C.
 
 \begin{code}[C]
 // The value of ...
@@ -141,13 +143,13 @@ The use of not, and and or in Racket is translated to !, \&\& and $\parallel$ re
 !( 9 == 8 ) // => true
 ( 1 && 1 ) // => true
 ( 0 || 0 ) // => false
-( 0 || 1 ) // => true
 \end{code}
 
 It is very important to keep in mind that C will short-circuit, similar to Racket, and stop evaluating an expression when a value is known. This can become very vital in complex code, as it can prevent long runtimes.\\
 
 The ternary operation in C $?$ works a lot like an if statement.  The ternary operation follows a predicate and then returns either the first option if it is true, or moves on the the second option if false.  You can also link ternary operations together to work in a way similar to the $cond$ statement in Racket.\\
 
+\exbox{2}{Here's how to link ternary operations together to get a $cond$ like behaviour.}
 \begin{code}[C]
 int ternary_operation(int n)
 {
@@ -175,7 +177,7 @@ Module scope is a variable or function that is only visible within that module (
 Block scope is a variable or function that is available only in a select code block (between braces {... }).  These are for variables and functions that are used during the function call and serve no purpose outside that function. 
 	}
 
-Here's a visual representation of all the different types of scope:\\
+\exbox{1}{Here's a visual representation of all the different types of scope}\\
 
 \begin{code}[C]
 int const g = 9; // Global scope.
@@ -187,6 +189,7 @@ int some_func(int const p)
 	int const l = 9; // Local scope.
 	
 	{
+	
 		int const l = 10; // Block scope.
 		
 		return l + f;
@@ -194,6 +197,7 @@ int some_func(int const p)
 }
 \end{code}
 
+                 
 The difference between Racket and C is that by default all functions and constants have global scope (public). For constants we require an extra keyword to use those constants outside of a given module. That word is $extern$.  For example, say we had the following module.\\
 
 \begin{code}[C]
@@ -231,8 +235,6 @@ extern int const a;
 int main(void)
 {
 	int sum_of_a = sum(a);	
-	
-	return 0;
 }
 \end{code}
 
@@ -245,7 +247,9 @@ int const b = 4; // OK
 (a + b); // Error, C cannot evaluate this.
 \end{code}
 
-\newpagesubsection{Recursion}
+\exerbox{Does anything special happen when you define a variable with a static prefix in a block scope?  What could this be used for? (Hint, Assignment 5)}
+
+\subsection{Recursion}
 
 By now one has likely become a recursion pro and will be happy to know that recursion works exactly as one would expect in C.  We will illustrate this using the implementations from sum from 0 to n using recursion both in Racket and C.\\
 
@@ -259,7 +263,7 @@ First in Racket...\\
 \begin{code}[C]
 int sum(int const n)
 {
-	return ( 0 == n ) ? n : (n + sum(n - 1));
+	return (0 == n) ? n : (n + sum(n - 1));
 }
 \end{code}
 
@@ -267,9 +271,248 @@ As one can see, it's pretty straight forward.\\
 
 \newpagesubsection{Function Definitions and Declarations}
 
+In C, there is a difference between declaring a function and defining a function.  When you define a function in C, it contains the body and actual code of your function.  However in C you are required to also declare functions before you use them.  You can have the definition anywhere in your module, just as you can have the declaration anywhere as well (declarations are most commonly found in interface files).\\
+
+\exbox{1}{Here are a few examples of the do's and don'ts of definitions and declarations}
+
+\begin{code}[C]
+// Function declaration (includes ';').
+int sum(int n);
+
+// Function definition (includes block scope).
+int sum(int n)
+{
+	return (0 == n) ? n : (n + sum(n - 1));
+}
+\end{code}
+
+It is important to note that you do not have to reference the parameter name in the declaration. However it is good practice to do so! This would be invalid:\\
+
+\begin{code}[C]
+// Function declaration (includes ';').
+int sum(int n);
+
+// Function definition (includes block scope).
+int sum(int n)
+{
+	return sum_helper(n) ? n : (n + sum(n - 1));
+}
+
+// Function definition (includes block scope).
+int sum_helper(int n)
+{
+	return (0 == n);
+}
+\end{code}
+
+The declaration for \emph{sum\_helper} must be placed above where you plan to reference it in your program.  Simply writing a declaration for the \emph{sum\_helper} function before the $sum$ function call will solve that problem.\\
+
+\newpagesubsection{Interface Files and Standard Modules}
 
 
- 
+For the first time we can access both files that we have written and those provided by regular C99!  This opens up the possibility to do so much more with your code.
+
+\subsubsection*{Interface Files}
+
+In C, we normally separate our written source code in our implementation file (.c) and our interface (.h).  The interface file contains all declarations to useful global functions from implementation files, as well as the proper documentation.  Creating an interface file makes it very easy to gather all the information we need into a single, easy to read and use file.\\
+
+\exbox{1}{Here's an example of an implementation file and it's complimentary interface file}
+
+\begin{code}[C]
+// Implementation for Module A (.c).
+
+#include "module_a.h" // This will be discussed below.
+
+int const g = 9; // Constant with global scope.
+
+static int const m = 9; // Constant with modular scope.
+
+// Function declaration (modular scope).
+static int sum_helper(int n);
+
+// Function definition with global scope and one parameter (local scope).
+int sum(int n) 
+{
+	return (sum_helper(n) ? n : (n + sum(n - 1));
+}
+
+// Function definition with modular scope and one parameter (local scope).
+static sum_helper(int n)
+{
+	return (0 == n);
+}
+\end{code}
+
+\begin{code}[C]
+// Interface for Module A (.h)
+
+// Provides the constant g (global scope).
+extern int const g;
+
+// Provides the sum function (global scope).
+//
+// Documentation would go here.
+int sum(int n);
+\end{code}
+
+Did you notice the use of \emph{\#include}? This is a \emph{preprocessor directive}. It will literally "copy" the contents of the interface file and "paste" it into your file. This is however hidden from us and done before compiling occurs. Now you should see why interface files drastically reduce the amount of code we will need to write and maintain.\\
+
+\subsubsection*{Standard Modules}
+
+Unlike Racket, there are no built in functions in C. All that we have in C are operators. There are a lot of libraries that C provides that we can include in our modules. These libraries are called standard libraries. Note the difference when including a standard library and an interface for a module we created.\\
+
+\begin{code}[C]
+// Standard C library.
+#include <somemodule.h>
+
+// Our module interface.
+#include "somemodule.h"
+\end{code}
+
+Some standard libraries that we have used thus far in CS 136 include: \emph{assert.h}, \emph{stdbool.h}, \emph{stdio.h} and \emph{limits.h}. A simple Google search will help you understand what each of them do if you are not sure.\\
+
+\exerbox{Write out the interface for a program that requires the ability to output statements (prinf) and takes in three different implementation files of your own.}
+
+\newpagesubsection{Structures}
+
+Structures in C are very similar to Racket with a few subtle but important differences. Here is an example of a \emph{posn} structure in C.\\
+
+\exbox{1}{Creating a structure in C.}
+
+\begin{code}[C]
+struct posn {
+	int x;
+	int y;
+}; // Don't forget this semi-colon!!!
+
+struct const posn p = {1, 2};
+
+int const p_x = p.x; // => 1
+int const p_y = p.y; // => 2
+
+// or alternatively...
+
+struct const posn p = { .y = 2, .x = 1 };
+
+int const p_x = p.x; // => 1
+int const p_y = p.y; // => 2
+\end{code}
+
+You should be aware on how to check if structures are equivalent. If \emph{p1} and \emph{p2} are structures you cannot use \emph{p1 == p2}. Similarly to tie this into modularization, if you would like to make a structure available to anyone, simply add it into your modules' interface file.\\
+
+\exbox{2}{Checking if two posn structures are equal.}
+
+\begin{code}[C]
+#include <stdbool.h>
+
+bool is_posn_equal(struct posn p1, struct posn p2)
+{
+	return (p1.x == p2.x) && (p1.y == p2.y);
+}
+\end{code}
+
+\exerbox{Write a structure for a box, with parameters for width, length and height.}
+\exerbox{Using the structure for a box, write a function that calculates the area and volume of a box.}
+
+\subsection{Standard IO Module}
+
+One module in particular is very important and powerful and that is \emph{stdio.h}.  The Standard IO module allows one to print statements to the console.   
+
+\exbox{1}{Here are a couple of examples showing the uses of the stdio.h library.}
+
+\begin{code}[C]
+// Some module.
+#include <stdio.h>
+
+int const my_age = 18;
+int const student_id = 20123456;
+
+int main(void) 
+{
+	// %d is a placeholder for an integer.
+	printf( "My age is... %d\n", my_age );
+	
+	// %x is a placeholder for a hexademical number and 08 means it must
+	// be 8 characters with zero as padding (ie 0xff => 0x000000ff).
+	printf( "My student ID is hexademical is... 0x%08x\n", student_id );
+	
+	// Multiple placeholders.
+	printf( "My age is... %d, I will be %d years old in 2 years.\n",
+	        my_age,
+	        my_age + 2 );
+	
+	return 0;
+}
+\end{code}
+
+The most important thing to know about printf is the symbol "backslash n" which signifies the creation of a newline.  Play around outputting lines with a "backslash n" at the end and without and see what happens.\\
+
+There are a numerous amount of placeholders that you can use. If you are further curious, Google "\emph{printf} placeholders" and there will be a nice table displaying all of them.\\
+
+\exerbox{Write a function that outputs a "nameplate" corresponding to various facts about you on every line. (E.g. Name, UserID, Residence, Program, Favourite food, ...)}
+
+\newpagesubsection{Main}
+
+At this point, I hope that you are wondering "well how the heck to I run my code?!?".  Well, you are finally big enough to know.  The only way in C to run your modules is to have a function called \emph{main}.  Every C function must have a main function, else the operating system will not know where to begin running your program!  So yeah, it's a little important.  Also a very quick and important note is that your function can only ever have one main function.  Your code will not compile with more than one main.\\
+
+\defnbox{Main}{Main is where a program starts it's execution.  It is responsible for the high-level organization of the program's functionality and has access to all the command arguments given to the program when it was executed.}
+
+\exbox{1}{Here is the syntax for the main function.  This is very important to understand.}
+
+\begin{code}[C]
+int main(void) 
+{
+	// ... body.
+	
+	// ... tests.	
+	
+	return 0; // or 1, OS flags. (optional)
+}
+\end{code}
+
+To break down this definition,\\
+
+\begin{itemize}
+
+\item \emph{void} is used to declare that main accepts no parameters.
+\item \emph{Main} has an \emph{int} return type however it does not return anything.
+\item The operating system invokes \emph{main}.  It returns 0 upon success, another integer upon failure.
+\item The return is not necessary. This is a special situation for \emph{main}.
+
+\end{itemize}
+
+For testing we are expected to use \emph{main}. You can use the functionality from the assert and stdio standard libraries to create an interactive testing module.\\
+
+\exbox{2}{Here's an example testing suite for our sum function written earlier on in this document.}
+
+\begin{code}[C]
+// testing module for sum.
+
+#include <assert.h>
+#include <stdio.h>
+
+#include "sum.h"
+
+int main(void)
+{
+	printf("Initializing some tests... \n");
+	
+	assert(sum(10) == 55);
+	assert(sum(0) == 0);
+	assert(sum(3) == 6);
+	
+	printf("done!\n");
+	
+	
+	return 0;
+}
+\end{code}
+
+\exerbox{Write your own testing suite for testing the area and volume function from the last section.}
+
+\exerbox{Try writing a whole function in your main function, include testing and documentation.}  
+
+
 
 
 
