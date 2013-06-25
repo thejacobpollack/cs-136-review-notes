@@ -276,8 +276,8 @@ Questions where we are supposed to create functions that perform some operation 
 	(cond
 		[(empty? abst) #f]
 		[(equal? key (bst-node-key abst)) #t]
-		[else (or (key_exists? key (bst-node-left abst))
-		          (key_exists? key (bst-node-right abst)))]))
+		[(< key (bst-node-key abst)) (key_exists? key (bst-node-left abst))]
+		[else (key_exists? key (bst-node-right abst))]))
 \end{code}
 
 \clearpage
