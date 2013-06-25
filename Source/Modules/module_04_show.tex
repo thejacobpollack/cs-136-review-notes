@@ -1,3 +1,148 @@
 \newpagesection{C Memory Model: Module 04}
 
+This section covers some of my favorite topics in CS. I may get into a lot more detail than we need to know with respect to this course, however every detail is important and will likely be brought up in future CS courses. I will explicitly label what we are responsible for knowing to avoid any confusion.\\
+
+Computers measure their memory capacity in \textbf{bytes} (8 bits). A \textbf{bit} is a \textbf{bi}nary dig\textbf{it} that is either on, 1 or off, 0. These are just units of measurement, similar to milometers, centimeters, kilometers, etc. however they are specific to a purpose with computers.\\
+
+The need to represent numbers in different bases is important when representing different measurements.
+
+\subsection{Hexadecimal, Decimal, Octal and Binary}
+
+In Computer Science we will often represent numbers in their base 16, base 10, base 8 and base 2 forms, respectively hexadecimal, decimal, octal and binary. It is important to understand why we do this and what it means to have a number represented in base $x$. Let's begin with decimal as it should be the most familiar to you.
+
+\subsubsection*{Decimal}
+
+\defnbox{Decimal}{Relating to or denoting a system of numbers based on the number of powers of 10. Base 10 identifiers include 0 ... 9.}
+
+Decimal, or alternatively known as base 10, was developed simply because we have 10 fingers accross 2 hands. It is the most popular form of communicating a numerical from one person to another. With these ten identifiers we are able to represent larger numbers such as 1000, 999 and 1337. Consider the following.\\
+
+\exbox{1}{
+Represent 1204 in its powers of 10.\\
+
+\textbf{Solution:} $1204 = (1) \times (10^{3}) + (2) \times (10^{2}) + (0) \times (10^{1}) + (4) \times (10^{0})$
+}
+
+\exerbox{Represent 1337 in its powers of 10.}
+
+\subsubsection*{Binary}
+
+\defnbox{Binary}{Relating to or denoting a system of numbers based on the number of powers of 2. Base 2 identifiers are only 0 and 1.}
+
+Binary, or alternatively known as base 2, is used when determining whether something is on (1) or off (0). Bits alone are rarely used in Computer Science as one bit represents such an insignificant quantity. It is common to hear the word byte, which refers to a group of bits.\\
+
+\defnbox{Byte}{Represents a group of 8 bits. One byte can represent 0 ... 255 distinct values.}
+
+\exbox{2}{
+Represent 255 in its powers of 2.\\
+
+\textbf{Solution:} $255 = (1) \times (2^{7}) + (1) \times (2^{6}) + (1) \times (2^{5}) + (1) \times (2^{4}) + (1) \times (2^{3}) + (1) \times (2^{2}) + (1) \times (2^{1}) + (1) \times (2^{0})$
+}
+
+\exbox{3}{
+Convert 255 from decimal to binary.\\
+
+\textbf{Solution:} $255 = 11111111$
+}
+
+\exerbox{Convert 15 from decimal to binary.}
+
+\subsubsection*{Octal}
+
+\defnbox{Octal}{Relating to or denoting a system of numbers based on the number of powers of 8. Base 8 identifiers are 0 ... 7.}
+
+Octal, or alternatively known as base 8, is occasionally used in Computer Science. Octal became a popular numbering system when IBM introduced 12-bit, 24-bit and 36-bit words. Octal was an ideal abbreviation of binary for these machines because their word size is divisible by three (Wikipedia).\\
+
+\exbox{4}{
+Represent 36 in its powers of 8.\\
+
+\textbf{Solution:} $36 = (4) \times (8^{1}) + (4) \times (8^{0})$
+}
+
+\clearpage
+\exbox{5}{
+Convert 36 from decimal to octal.\\
+
+\textbf{Solution:} $36 = 44$
+}
+
+\exerbox{Convert 3600 from decimal to binary.}
+
+\subsubsection*{Hexadecimal}
+
+\defnbox{Hecadecimal}{Relating to or denoting a system of numbers based on the number of powers of 16. Base 10 identifiers are 0 ... 9 and A ... F. Hexadecimal is often denoted by 0x, ie 0xF represents 15 in hexadecimal.}
+
+Hexadecimal, or alternatively known as base 16, is used quite often in Computer Science. It is often used when representing memory addresses or the value of 1 byte (one hexadecimal identifier represents 4 bits).\\
+
+Hexadecimal is extremely important! Let's take a look at a few examples.\\
+
+\exbox{6}{
+Represent 255 in its powers of 16.\\
+
+\textbf{Solution:} $255 = (15) \times (16^{1}) + (15) \times (16^{0})$
+}
+
+\exbox{7}{
+Convert 255 from decimal to hexadecimal.\\
+
+\textbf{Solution:} $255 = 0xFF$
+}
+
+\exerbox{Convert 255 from decimal to binary. Then convert the binary representation of 255 to hexadecimal. What can you observe?}
+
+Observe that in C the following are equivalent.\\
+
+\begin{code}[c]
+int const x = 0xf; // => 15
+int const y = 15; // => 15
+\end{code}
+
+\newpagesubsection{More Operators}
+
+For the memory model of C we are introducing two new operators. The \emph{sizeof} operator, that will determine the amount of bytes required to store a given datatype (determined at compile-time) and the address of operator, which grabs the address in memory, commonly known as the memory address, of a give identifier.\\
+
+\defnbox{Memory Address}{Consider all the blocks in memory as an array. The memory address is the index of a given element of that array, where each element has a 4 byte index and a 1 byte value.}
+
+Consider the following.\\
+
+\begin{code}[c]
+int const size_int = sizeof( int ); // => 4
+\end{code}
+
+... and the address of operator.\\
+
+\begin{code}[c]
+int const g = 9;
+int const g_address = &g; // => address of g, 0x____.
+\end{code}
+
+\exerbox{What is the size of a \emph{char}?}
+
+\exerbox{What is the size of a \emph{bool}?}
+
+\exerbox{Is the memory address of an identifier always the same?}
+
+\newpagesubsection{Memory}
+
+In every computer there is something called \textbf{primary memory} (RAM) and \textbf{secondary memory} (hard drive, flash drives, etc.). The one term we will worry about is primary memory.\\
+
+\defnbox{Primary Memory}{Commonly known as primary storage and main storage, is the only one directly accessed by the CPU. The CPU continuously reads instructions stored there and executes them as required.}
+
+Programs are launched into primary memory and disappear when the program is exited or when the computer shuts down. Secondary memory will remain persistent and hence is often used for storage. Primary memory is much faster than secondary memory, however primary memory is much more expensive.\\
+
+\subsubsection*{Quantifying Memory}
+
+Here is a list of some common units that we should be familiar with:
+
+\begin{itemize}
+
+\item Byte = 8 bits, $2^{8}$ possible values.
+\item KiloByte (KB) = 1024 bytes.
+\item MegaByte (MB) = 1024 kilobytes.
+\item GigaByte (GB) = 1024 megabytes.
+\item Terabyte (TB) = 1024 gigabytes.
+
+\end{itemize}
+
+\subsubsection*{Blocks of Memory}
+
 To be continued...

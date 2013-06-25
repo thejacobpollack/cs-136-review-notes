@@ -83,7 +83,7 @@ When you are defining a constant in Racket it is an immutable identifier. We wil
 (define penny 1)
 
 (define (get_pennies n)
-	(* n pennies))
+	(* n penny))
 \end{code}
 
 Constants are quite useful to improve \textbf{readability} and ease of \textbf{maintainability}. What if the value of a penny changed from 1 cent to 2 cents and we have over 100 different functions using the value of a penny. All we would need to do is change one constant as oppose to changing the value of a penny in over 100 separate places.

@@ -1,0 +1,49 @@
+\newpagesection{C Compilers (and RunC)}
+
+This section is a preface to our introduction to C99 (and henceforth referenced as just C) in CS 136. I feel that it is very important that we understand what goes on behind the scenes when you click "run" in RunC. Understanding what goes on behind the curtains is important when designing successful software. You can skim through this section and still design successful software however I strongly recommend against it.\\
+
+Lucky for us, RunC is a very useful compiler when learning how to program in C. If you are unfamiliar with C compilers, then to make an appropriate analogy: RunC is very similar to the learning languages in Racket.\\
+
+\defnbox{C Compiler}{Translates our readable C source code into machine code, a representation of source code that the processor is able to interpret and execute.}
+
+One of the most popular C compilers is the GCC compiler. This compiler is available accross many platforms and is extremely robust. GCC is installed on your Ubuntu environment however it must be accessed through the terminal.\\
+
+In order to "run" a program it must typically undergo three phases. These three phases are known respectively as \textbf{preprocessing}, \textbf{compiling} and \textbf{linking}.\\
+
+The program is initially given to a preprocessor.\\
+
+\defnbox{Preprocessing}{Scans all of your source code for commands that start with \# (known as \textbf{directives}). If a directive is found, it will perform the appropriate action(s).}
+
+The modified program is now passed to a compiler.\\
+
+\defnbox{Compiling}{Turns all of your readable source code into machine instructions, \textbf{object code}.}
+
+The compiler will output object files for each respective source code files. These object files are then passed to a linker.\\
+
+\defnbox{Linking}{Grabs all of the object files and any additional libraries needed (such as \emph{stdbool}) and links them into a single executable.}
+
+Fortunately with respect to this course, this process is automated in RunC environment when we click "run". However if we were using a different compiler such as GCC, we would need to perform all three steps manually (typically the preprocessing step is integrated with the compiling step and hence only two steps are typically explicitly referenced).\\
+
+The bash commands necessary to compile and link your program typically vary, depending on the compiler and operator system you are using. In our Ubuntu environment, the command to compile our code with GCC is as follows:\\
+
+\begin{code}[bash]
+gcc -o -std=c99 file file.c
+\end{code}
+
+Note the c99 flag. This is required to compile our code using the C99 standard.\\
+
+A common thing to do when developing support software is to release the object code for your module, or a compiled DLL. The advantage of distributing your module's object file that you are able to provide a client with the necessary tools to use your program without explicitly giving them the source code. These types of files will end with .o or .dll.\\
+
+\exerbox{You have been hired to create a module that cracks a safe. Your clients provide you with a dummy safe called safe.o that has functions \emph{unlock} and \emph{withdraw\_money}. What should you do with the safe.o while developing your safe cracker?}
+
+\subsubsection*{Integrated Development Environments}
+
+It will become a pain to compile all of our source files through the terminal one by one with no ability to debug or easily test our program. An \textbf{integrated development environment}, commonly known as an IDE is a program that allows you to work on your source code, compile, link and run your executable with ease. In addition to that, most IDEs have the ability for you to debug your code and view the machine instructions for your program.\\
+
+The "IDE" we use is called gedit, which is actually only a text editor. RunC is an external tool built into gedit that allows us to compile, link and run our program similar to how an IDE would.\\
+
+\subsubsection*{In Summary}
+
+For this course we will not be expected to know how to use different C compilers or the phases a compiler takes when compiling our code. However if you understand what goes on behind the curtains it will help you design successful software and debug any problems you may encounter in the future.\\
+
+Keep in mind that we are expected to compile with RunC. Your source code may compile for other compilers such as GCC, however marmoset will be compiling our source code with RunC.
