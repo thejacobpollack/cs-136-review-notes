@@ -1,3 +1,388 @@
 \newpagesection{Imperative C: Module 05}
 
-To be continued...
+Once module 05 was released there was the "Computer Science equivalent" of a standing ovation in Dave's class. If you recall from the beginning of module 01 we mentioned that we will be revisiting the imperative paradigm soon. Well, this is that moment in time.
+
+\subsection{The Imperative Paradigm}
+
+You can program in an imperative paradigm in both Racket and C. You will find that Racket is designed as more of a functional language whereas C is designed to be both a functional and imperative language.
+
+\subsubsection*{In Racket}
+
+There are three fancy functions that we are introduced to in Racket that allow us to use control flow to manipulate state. These functions are \emph{begin}, \emph{printf} and \emph{set!}. See their respective documentation for further information on those individual functions. Here is an example using all three in a favorite color module.\\
+
+\begin{code}[Lisp]
+#lang racket ; favorite-color.rkt
+
+(define favorite-color 'blue)
+
+(define (guess-color color)
+	(cond
+		[(symbol=? color favorite-color) (begin (printf "Correct!")
+		                                        (set! favorite-color 'green)
+		                                        #t)]
+		[else (printf "Nope, you are wrong!") #f]))
+\end{code}
+
+Observe the use of the \textbf{implicit \emph{begin}} in the else block. \emph{Begin} is similar to \emph{local}, they can both be implicitly written in Racket.\\
+
+Furthermore, observe that \emph{printf} is outputting to the console and producing \emph{void}. We say that \emph{printf} has a \textbf{side effect}, that side effect being the output to the console.\\
+
+\defnbox{Side Effect}{A secondary effect, typically not the main intention of the function, occuring behind the scenes.}
+
+It is extremely important to document side effects in the design recipe. Keep in mind side effects are only in an imperative paradigm - you cannot have a side effect in a functional paradigm.\\
+
+\clearpage
+\exbox{1}{
+What is the side effect of the assignment operation (=)?\\
+
+\textbf{Solution:} The assignment operator returns the value to the right of the operator and has a side effect that overwrites the identifier in memory to the left of the operator with the value to the right of the operator.
+}
+
+In addition to operations, functions are able to have side effects as well. Consider the following:\\
+
+\exbox{2}{Write a function in Racket that will consume an integer, $x$ and produce $x^{2}$. It has a side effect that outputs "You squared me!" every time the function is called.}
+
+\begin{code}[Lisp]
+(define (square_x x)
+	(printf "You squared me!")
+	(* x x))
+\end{code}
+
+Furthermore, functions are able to have only side effects. These functions are declared with \emph{void}. Consider the following.\\
+
+\exbox{3}{Write a function \emph{hello\_world} that outputs "Hello world!" followed by a new line to the console.}
+
+\begin{code}[c]
+void hello_world( void ) {
+	printf( "Hello world!\n" );
+	
+	return; // Optional in VOID functions.
+}
+\end{code}
+
+If you recall above we mentioned it is important to document side effects. All side effects must be properly documented in the POST element of the design recipe. Consider the following.\\
+
+\exbox{4}{Write the documentation for example 2.}
+
+\clearpage
+\begin{code}[Lisp]
+; square_x: Int -> Int
+;	Purpose: Consumes an integer, x and produces the value of
+;            x squared.
+; PRE: true
+; POST: - produces an integer >= 0,
+;       - Side Effect: outputs "You squared me!".
+\end{code}
+
+\exerbox{Write the documentation for example 3.}
+
+\subsubsection*{In C}
+
+Similar to Racket, you can program in an imperative paradigm in C.\\
+
+In C we have curly braces (\{ \}). These braces are known as a \textbf{compound statement}, or more commonly a C block. A C block behaves similarly to \emph{begin} in Racket with one notable difference. In Racket, \emph{begin} will evaluate every statement one by one and stop after the last statement is evaluated and produce its value, however in C it will do the exact same thing except it requires a control flow statement to inform the C block that it has reached the end of statements we want evaluated. This special control flow statement is called \emph{return}.\\
+
+\exerbox{Will the following code block produce an error? If no, state the value of x, otherwise state the reason for the error. You can assume all of the necessary libraries are included.}
+
+\begin{code}[c]
+int const x = printf( "Hello world!\n" );
+\end{code}
+
+\newpagesubsection{Control Flow Statements}
+
+In an imperative paradigm we are introduced to a few new control flow statements. Those statements being: \emph{if}, \emph{for}, \emph{while}, \emph{switch}, \emph{continue} and \emph{break}. We are responsible for knowing the behavior of each of these control flow statements with the exception of \emph{switch}.\\
+
+The \emph{if} statements is setup as follows.\\
+
+\begin{code}[c]
+if (exp) {
+	// ... true.
+} else if (exp) {
+	// ... true.
+} else {
+	// ... false.
+}
+
+// ... or alternatively
+
+if (exp)
+	// true.
+else
+	// false.
+\end{code}
+
+Alternatively an \emph{if} statement can be setup as follows, however it is extremely bad practice and should be avoided at all costs! Consider the following.\\
+
+\begin{code}[c]
+if (exp)
+	// ... true.
+	if (exp)
+		// ... true.
+else
+	// ... false.
+\end{code}
+
+Observe, is the \emph{else} applied to the first or the second if statement? In general we should avoid this. Keep in mind you can have a long chain of \textit{if}/\textit{else if}/\textit{else} statements. Consider the following.\\
+
+\exbox{1}{Write a function \emph{sum} that is passed one argument, $n$ and returns the sum from 0 ... n.}
+
+\clearpage
+\begin{code}[c]
+int sum( int n ) {
+	if ( 0 == n ) {
+		return n;
+	} else {
+		return n + sum( n - 1 );
+	}
+}
+
+// ... or alternatively
+
+int sum( int n ) {
+	if ( 0 == n ) {
+		return n;
+	}
+	
+	return n + sum( n - 1 );
+}
+\end{code}
+
+Note that you can have multiple control flow statements. These are used to "control the flow" of your function.\\
+
+There is an extremely common error occuring this semester on Piazza with respect to control flow. The error is "reached end of non-void function". It is caused when you are not using control flow statements properly in a non-void function. Consider the following.\\
+
+\begin{code}[c]
+int do_something( int n ) { // BAD BAD BAD!!!
+	if ( 0 <= n ) {
+		return n;
+	}
+	
+	// ... some more code, but oops - no return?!
+}
+
+int do_something( int n ) { // OK!
+	if ( 0 <= n ) {
+		return n;
+	}
+	
+	return n * -1;
+}
+\end{code}
+
+What would happen if we called the function \emph{do\_something} and passed it -1? The function would spit out the error "reached end of non-void function". To avoid this, make the appropriate corrections.\\
+
+\subsection{Mutation}
+
+Thus far all we have been permitted to use are constants. Recall, constants are immutable, meaning once they are initialized they can never be changed throughout the rest of the execution of the program. How can we initialize an identifier to be mutable?\\
+
+\defnbox{Variable}{An identifier that is mutable, hence it is able to be overwritten in memory with a new value.}
+
+Consider the following.\\
+
+\begin{code}[c]
+int a = 9; // Note the absence of 'const', hence a is a variable.
+
+printf( "a = %d\n", a ); // => 9
+
+a = 8; // Overwrites a in memory using the assignment operator.
+
+printf( "a = %d\n", a); // => 8
+\end{code}
+
+Remark that we can mutate $a$ as many times as we want throughout the execution of our program.\\
+
+\exerbox{Initialize the variable $b$ to 9. Mutate $b$ such that be is equal to 18.}
+
+\newpagesubsection{Assignment Operator}
+
+In C the \textbf{assignment operator =} (not ==, the "is equivalent to?" operator) is used to assign a value to an identifier. If you are a Math student you will likely find the following confusing.\\
+
+\begin{code}[c]
+x = y;
+
+y = x;
+\end{code}
+
+The first line is assigning the value of y to be the new value of x. The third line is assigning the value of x to be the new value of y. Remark that these are not equivalent operations! In variable declarations we say that the variable, $var$ is \textbf{initialized} to a value, $v$.\\
+
+The assignment operator performs two actions. In the example above (line 1), x is being assigned to the value of y. However after it overwrites x in memory, it will then return the value of y. Here is an example of a very confusing but valid block of code.\\
+
+\begin{code}[c]
+int x = 10;
+int y = 11;
+
+printf( "%d\n", ( x = ( y + 1 ) ) ); // => Outputs 22.
+\end{code}
+
+\textbf{Remark} that the assignment operator is performing a side effect!
+
+\newpagesubsection{Static Storage}
+
+Recall that the \emph{static} keyword when used with global constants and variables restricts them to modular scope. But what happens if we declare a \emph{static} local variable? \\
+
+\defnbox{Static Storage}{Stores local variables in the global data section of memory as oppose to on the stack. If it is a constant then depending on the compiler it may store it in the read-only section of memory.}
+
+Consider the following example.\\
+
+\begin{code}[c]
+int func( void ) {
+	static int total_func_called = 0;
+	
+	total_func_called = total_func_called + 1;
+	
+	return total_func_called;
+}
+
+func(); // => 1
+func(); // => 2
+func(); // => 3
+func(); // => 4
+\end{code}
+
+This function will \emph{return} the amount of times the function has been called. Static storage is very useful as you have probably noticed on assignment five.\\
+
+\exerbox{Write a function \emph{avg\_age} that is passed an integer, $age$ and will return the average of all the ages passed to the function.}
+
+\newpagesubsection{Uninitialized Data}
+
+In C you are able to declare variables without an initial value. This is called an uninitialized variable and looks as follows.\\
+
+\begin{code}[c]
+int i;
+\end{code}
+
+Uninitialized variables are considered bad practice. However, if you insist on using them then there are a few rules you need to be aware of. If you declare a global variable then it will be automatically initialized to 0 (if no value is specified), however if you declare a variable on the stack it will be initialized to some arbitrary value from a previous stack frame.\\
+
+You must \textbf{always} initialize variables on the stack!\\
+
+\exerbox{Declare a variable $weird$ on the stack but do not initialize it. Execute your program 3 or 4 times. What is the value of $weird$?}
+
+\newpagesubsection{Assignment Shortcuts}
+
+Ha! I bet this section caught someones eye.\\
+
+As programmers we are extremely lazy. Conveniently, C provides us with "shortcut" operations that allow us to assign common values or perform common mutation to variables. Consider the following list of shortcut operations for mutating variables.\\
+
+\begin{code}[c]
+int x = 10;
+int y = 11;
+
+x = x + 1;
+y = y + 1;
+
+// ... is equivalent to.
+
+x += 1;
+y += 1;
+
+// ... is equivalent to.
+
+x++; // Returns the value of x then increments x by 1.
+y++; // Returns the value of y then increments y by 1.
+
+// ... or.
+
+++x; // Increments the value of x by 1 then returns the value of x.
+++y; // Increments the value of y by 1 then returns the value of y.
+\end{code}
+
+Observe the prefix and suffix notation for the ++.\\
+
+\exerbox{Why could the following code block be problematic?}
+
+\begin{code}[c]
+// ...
+
+if ( ( sum == 0 ) && ( count++ == 10 ) ) {
+	// ...
+}
+
+// ...
+\end{code}
+
+\newpagesubsection{Examples of Mutation}
+
+Now that we have briefly been introduced to what programming in an imperative paradigm is, let's take a look at some classic examples of imperative programming. Consider the following.\\
+
+\exbox{1}{Write a function \emph{swap} that will swap two values.}
+
+\begin{code}[c]
+void swap( int * const x, int * const y ) {
+	int const temp = *x;
+	
+	*x = *y;
+	*y = temp;
+}
+\end{code}
+
+Note the use of pointers and a temporary constant \emph{temp}. Without pointers the swapped values would disappear once the stack frame is popped from the call stack. Let's take a look at another example using structures.\\
+
+\exbox{2}{Write a function \emph{reflect\_point} that will reflect a point in the line $y = x$.}
+
+\begin{code}[c]
+void reflect_point( struct posn * const p ) {
+	int const temp = p->x;
+	
+	p->x = p->y;
+	p->y = temp;
+}
+\end{code}
+
+If you noticed in the previous two examples I am using the keyword \emph{const} in a strange place. Here is how it would be read in example 2, "p is a constant pointer pointing to a struct posn". Here are all the possible combinations.\\
+
+\begin{code}[c]
+int *p; // P is a pointer to an integer.
+
+int const *p; // P is a pointer to a constant integer.
+
+int * const p; // P is a constant pointer to an integer.
+
+int const * const p; // P is a constant pointer to a constant integer.
+\end{code}
+
+The only difference between a constant pointer and a pointer is the value that \emph{p} points to cannot change. This is exactly what you would expect \emph{const} to do.\\
+
+\exerbox{Write functions \emph{pre\_inc}, \emph{post\_inc}, \emph{pre\_dec} and \emph{post\_dec} that are passed a pointer to an integer and perform similarly to $++var$, $var++$, $--var$ and $var--$.}
+
+\newpagesubsection{Looping: Iteration}
+
+Iteration is the imperative way of performing recursion. There are cases where recursion may seem more "logical" to look at, however we are expected to understand how to think recursively and iteratively. Consider the following introductions of the \emph{while} loop, \emph{do-while} loop and the \emph{for} loop.\\
+
+\begin{code}[c]
+do {
+	// ... some code to be executed indefinitely once.
+} while ( exp );
+
+while ( exp ) {
+	// ... do something involving the expression.
+}
+
+for ( declaration; expression; mutation on the declaration ) {
+	// ... do something.
+}
+\end{code}
+
+These three control flow statements will iterate until the expression is false. Note, a $do-while$ loop will always iterate once before checking whether the expression is false. Consider the following.\\
+
+\exbox{3}{Write a function \emph{make\_simplified\_chessboard} that will output a chess board of size $n$ in ASCII.}
+
+\begin{code}[c]
+void make_simplified_chessboard( int const n ) {
+	for ( int r = 0; r < n; r++ ) {
+		for ( int c = 0; c < n;  c++ ) {
+			const bool is_black = ( ( ( c - r ) % 2 ) == 0 );
+			
+			if ( is_black ) {
+				printf( "**" );
+			} else {
+				printf( "  " );
+			}
+		}
+		
+		printf( "\n" );
+	}
+}
+\end{code}
+
+\clearpage
+\exerbox{Write a function \emph{make\_hard\_chessboard} that is passed two integers, a row and a column size where they are both congruent to 0 (mod 2). This function will return void and output a chess board of size row by col. Represent black spaces with "**" and white spaces with "  " (two spaces).}
