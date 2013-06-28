@@ -115,11 +115,15 @@ int const g = 9;
 int const g_address = &g; // => address of g, 0x____.
 \end{code}
 
-\exerbox{What is the size of a \emph{char}?}
+\exerbox{What is the size of a \emph{char} and a \emph{bool}?}
 
-\exerbox{What is the size of a \emph{bool}?}
+\exerbox{What is the size of a \emph{int} pointer?}
 
-\exerbox{Is the memory address of an identifier always the same?}
+\exerbox{What is the size of a \emph{bool} pointer?}
+
+\exerbox{What is the size of a \emph{struct posn} pointer?}
+
+\exerbox{Declare 4 constant integers on the stack and output all of their memory addresses to the console. Do you notice a pattern? Do the same but for global constant integers.}
 
 \newpagesubsection{Memory}
 
@@ -143,6 +147,221 @@ Here is a list of some common units that we should be familiar with:
 
 \end{itemize}
 
-\subsubsection*{Blocks of Memory}
+\subsubsection*{CPUs}
+
+This is a rather short section barely scratching the surface of CPUs, but it's important to know this for CS 136. You have probably heard the phrases "... my computer has a 32-bit CPU ...", "... yea well my computer has a 64-bit CPU ..." and "... how come I cannot have 8 GB of RAM on a 32-bit CPU ...", but what does it all mean?\\
+
+The amount of bits your CPU is determines the amount of memory addresses you can have. If you have a 32-bit CPU then you can have up to $2^{32}$ memory addresses, which is exactly $4,294,967,296$ memory addresses.\\
+
+If you have a 64-bit CPU then you can have up to $2^{64}$ memory addresses which is a considerably larger amount than a 32-bit machine. Note that you can have \textbf{up to} $n$ amount of memory addresses, not exactly $n$. For CS 136 we are expected to be using a 32-bit machine, we just wanted to make sure you understand what that really means.
+
+\subsubsection*{Accessing Memory}
+
+The big question is, with all of this memory how do we access it? If you recall, we mentioned the term \textbf{memory address}. Now, let us make a formal definition.\\
+
+\defnbox{Memory Address}{Is an identifier (4 byte identifier with respect to this course) for one byte of memory.}
+
+Remark that a memory address is a number. In fact, it is a number that is often represented in hexadecimal because two hexadecimal digits can easily represent a byte. Depending on your CPU, you can have a lot of memory addresses (and hence a lot of memory) or very few memory addresses (and hence not a lot of memory). The CS 136 Ubuntu environment is a 32-bit machine and hence has $2^{32}$ \emph{unique} memory addresses.\\
+
+Consider the following program.\\
+
+\exbox{1}{Recall how we declare a constant in C?}
+
+\begin{code}[c]
+#include <stdio.h>
+
+int const a = 9;
+
+int main( void ) {
+	printf( "The value of a is %d.\n", a ); // => 9
+	printf( "The address in memory of a is 0x%08x.\n", &a ); // => 0x2ff
+	
+	return 0;
+}
+\end{code}
+
+Observe that the value of $a$ is 9, however the memory address of $a$ is $0x2ff$. Memory addresses are the computers identifier for where the value of $a$ is stored in memory. It will keep track of the memory address as long as the memory block is in use.\\
+
+\exerbox{What do you think the block of memory from example 1 looks like for $a$?}
+
+\newpagesubsection{Blocks of Memory}
+
+This section is tangent from the C memory model with respect to this course, however it is extremely important to be aware of this when you are reading bits from specific memory addresses.\\
+
+Recall that an integer requires 4 consecutive memory addresses to store its value. Let's presume that we declared a global integer, $a$, and that the address of operator returns the value $0x2ff$. This means that the bit representation of $a$ is stored in $0x2ff$, $0x300$, $0x301$ and $0x302$.\\
+
+But which memory address contains what bits? Let us make two important definitions.\\
+
+\defnbox{Little Endianness}{The ordering of the binary representation of a number from least significant bit to most significant bit.}
+
+\defnbox{Big Endianness}{The ordering of the binary representation of a number from most significant bit to least significant bit.}
+
+There is a third type of endianness called \textbf{mixed or middle endianness}, however it is not as widely used as the other two types of endianness and hence will not be mentioned again.\\
+
+Big endianness is a lot easier to understand because it is how we represent numbers as human beings. If we return to the example above, the block of memory for $a$ would look as follows assuming big endianness.\\
+
+\begin{center}
+$0x2ff = [ 0 0 0 0 0 0 0 0 ]$\\
+$0x300 = [ 0 0 0 0 0 0 0 0 ]$\\
+$0x301 = [ 0 0 0 0 0 0 0 0 ]$\\
+$0x302 = [ 0 0 0 0 0 1 0 1 ]$\\
+\end{center}
+
+Observe that the most significant bits are in the leading memory address while the least significant bits are in the proceeding memory addresses. This is exactly like representing the number one hundred and twelve as $112$. On the flip side, let us consider what the blocks of memory would look like assuming little endianness.\\
+
+\begin{center}
+$0x2ff = [ 0 0 0 0 0 1 0 1 ]$\\
+$0x300 = [ 0 0 0 0 0 0 0 0 ]$\\
+$0x301 = [ 0 0 0 0 0 0 0 0 ]$\\
+$0x302 = [ 0 0 0 0 0 0 0 0 ]$\\
+\end{center}
+
+Observe that the least significant bits are in the leading memory address while the most significant bits are in the proceeding memory addresses.\\
+
+There are quite a few advantages and micro performance improvements with each endianness, such as addition and subtraction, however we do not need to be aware of them. When communicating with another machine it is important to be aware of how that machine stores values in memory or you could end up reading a value completely incorrect assuming the wrong endianness.\\
+
+\exerbox{If $my\_num$ is an integer declared on the stack for a 64-bit machine and initialized to -9 (where its memory address is $0xff$), what does its blocks of memory look like if the CPU uses little endianness?}
+
+\newpagesubsection{Sections of Memory}
+
+The sections of memory is one of the most important concepts to understand if you plan to design effective software. We are introduced to four of the five sections of memory: \textbf{code}, \textbf{read-only}, \textbf{global data} and \textbf{stack}. The fifth section, \textbf{heap}, is not our responsibility for the time being.\\
+
+When your program is ran, the operating system will allocate a block of memory of size $x$ that your program can use. The smallest memory addresses will be allocated to the code, read-only and global data sections and the largest memory addresses will be allocated to the stack section. Observe that the code, read-only and global data sections grow from smaller addresses to bigger addresses and the stack grows from the biggest address to smaller addresses.\\
+
+Consider the following program.\\
+
+\begin{code}[c]
+int const g1 = 10; // => Memory address of g1 could be 0x10.
+int const g2 = 10; // => Memory address of g2 could be 0x14.
+char const g3 = 'A'; // => Memory address of g3 could be 0x18.
+bool const g4 = true; // => Memory address of g4 could be 0x19.
+
+int main( void ) {
+	int const a = 10; // => The memory address of a could be 0x200.
+	int const b = 10; // => The memory address of b could be 0x196.
+	int const c = 10; // => The memory address of c could be 0x192.
+	
+	return 0;
+}
+\end{code}
+
+Observe that the stack is converging with the global data section of memory. If the stack were to grow too big or the global data section were to grow too big then it would result in one section overwriting memory used by another section, commonly known as stack overflow (as global data overflow is much harder to achieve). Cases like these can often be found behind very deep recursion or poor stack overhead management.
+
+\newpagesubsection{Overflow}
+
+What happens if our data type can only hold a 1 byte value but we pass it a 2 byte value? This is known as \textbf{overflow} and is a very common mistake that we need to be very aware about! Let us define two important terms.\\
+
+\defnbox{Overflow}{When the input value is greater than the maximum value determined by the amount of bytes allocated to a given data type.}
+
+Similarly,\\
+
+\defnbox{Underflow}{When the input value is less than the minimum value determined by the amount of bytes allocated to a given data type.}
+
+Recall that an integer can take on $2^{32}$ distinct values and hence a signed integer represents any number, $n$, where $n \in [-2^{31}, 2^{31} - 1]$. What do you suppose would happen if we were to assign the value of a signed integer to be $2^{31}$?\\
+
+\exbox{1}{Consider the following example of integer overflow.}
+
+\begin{code}[c]
+int const a = 2147483647; // => 2^31 - 1.
+int const b = a + 1; // => 2^31, overflow, an ambiguous number.
+\end{code}
+
+Depending on your environment the value of $b$ may be \textbf{rolled over} and become the smallest possible signed integer, however this behavior is undefined and unpredictable for a signed integer.\\
+
+\exerbox{What is the smallest possible positive number that will overflow a \emph{char}?}
+
+\exerbox{Why is overflow for a signed integer considered as undefined behavior?}
+
+\exerbox{Write a function \emph{safe\_add} that will safely add two valid integers or return -1 if their sum is an overflow.}
+
+\newpagesubsection{Control Flow}
+
+In C we have this fancy term called \textbf{control flow}.\\
+
+\defnbox{Control Flow}{Is used to model how a program is executed.}
+
+When your program is ran by the operating system, it is given a specific \textbf{state} which includes the position at where the program currently is during its execution. Operating systems invoke the \emph{main} function, it is the starting point of your program.\\
+
+Remark that you can only have one main function! Moreover, the position (or location) of your program is known as the \textbf{program counter} which stores the address of the machine code for the current instruction.\\
+
+Recall the control flow statement \emph{return}? It is used to \textbf{jump} back to where the function was called. It "controls the flow" of your program. There are a lot more control flow statements in C which we will be introduced to in module 05 however for now only worry about \emph{return}.\\
+
+\newpagesubsection{The Call Stack}
+
+Suppose there is a function \textit{main} that calls a function \textit{f}, then that function calls a function \textit{g}. We say that \textit{f} is \textbf{pushed} onto the stack. Once it reaches a \textit{return} control flow statement, \textit{f} is \textbf{popped} from the stack. This history is known as the \textbf{call stack}.\\
+
+\defnbox{Stack Frame}{Consists of the arguments passed to a function, local variables/constants declared locally to the function and the return address for the function}
+
+Remark that when a global constant is declared it is put into the read-only section of memory and that local constants are put into the stack section of memory. When the stack frame is popped, the local constants disappear however the global constants remain persistent throughout the execution of the program.\\
+
+Notice that all arguments are copies of their original values. Meaning that if we pass an argument and alter it inside a function it will not alter the original value outside of the function.\\
+
+\exbox{1}{Describe the call stack before any stack frame is popped for the following functions.}
+
+\lstset {
+	language=c
+}
+\begin{lstlisting}
+int g( int const x ) {
+	return x + 3;
+}
+
+int f( int const x ) {
+	int const a = ( x * 2 ) + g( x );
+}
+
+int main( void  ) {
+	const int result = f( 5 );
+	
+	// ...
+	
+	return 0;
+}
+\end{lstlisting}
+
+The call stack would be illustrated as follows.\\
+
+\clearpage
+\lstset {
+	language=c
+}
+\begin{lstlisting}
+/**
+ * ====================
+ * g:
+ * 	x: 5
+ * 	return addr: f:6
+ * ====================
+ * f:
+ * 	x: 5
+ * 	a: ?
+ * 	return addr: main:10
+ * ====================
+ * main:
+ * 	result: ?
+ * 	return addr: OS
+ * ====================
+ */
+\end{lstlisting}
+
+The call stack is stored in the stack section of our memory model. This is important! If you recall what we stated earlier about stack overflow and how it occurs. You should now see why!\\
+
+Here is a review of all of the memory sections we are responsible for thus far:\\
+
+\lstset {
+	language=c
+}
+\begin{lstlisting}
+int const r = 9; // => &r is read-only.
+int g = 9; // => &g is global data.
+
+int main( void ) { // => &main is code.
+	int const s = 9; // => &s is stack.
+	
+	return 0;
+}
+\end{lstlisting}
+
+\newpagesubsection{Pointers}
 
 To be continued...
